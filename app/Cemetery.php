@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Cemetery whereCreatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Cemetery whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string $name
+ * @method static \Illuminate\Database\Query\Builder|\App\Cemetery whereName($value)
  */
 class Cemetery extends Model
 {

@@ -11,6 +11,18 @@
 |
 */
 
+Route::get("/migrate",function()
+{
+    \Illuminate\Support\Facades\Artisan::call("migratge");
+});
+
+Route::group(["prefix" => "import"], function()
+{
+    Route::get("excel", "ImportController@excel");
+
+});
+
+
 Route::get('/', function () {
     return view('welcome');
 });

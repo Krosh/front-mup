@@ -16,6 +16,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property integer $yearDeath
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ * @property string $memorial
+ * @property string $sizeMemorial
+ * @property string $memorialMaterial
  * @method static \Illuminate\Database\Query\Builder|\App\Dead whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Dead whereIdGrave($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Dead whereFamily($value)
@@ -25,6 +28,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Dead whereYearDeath($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Dead whereCreatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Dead whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Dead whereMemorial($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Dead whereSizeMemorial($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Dead whereMemorialMaterial($value)
  * @mixin \Eloquent
  */
 class Dead extends Model
