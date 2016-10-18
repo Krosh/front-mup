@@ -2,26 +2,80 @@
 
 namespace App\Http\Controllers;
 
+use App\Cemetery;
+use App\Dead;
+use App\Forms\UploadXmlForm;
 use App\Grave;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Illuminate\Support\Facades\Redirect;
+use Kris\LaravelFormBuilder\FormBuilder;
 use PHPExcel_IOFactory;
 
 class ImportController extends Controller
 {
+    public function load_xml(FormBuilder $formBuilder)
+    {
+        $form = $formBuilder->create(UploadXmlForm::class, [
+            'method' => 'POST',
+            'url' => url("/import/save"),
+        ]);
+
+        return view('load_xml', ["form" => $form]);
+    }
+
+    public function save_xml(Request $request)
+    {
+        $idCemetery = $request->get("cemetery");
+        foreach ($request->file("xml") as $file)
+        {
+            $filePath = $file->getRealPath();
+            $this->xml($idCemetery, $filePath);
+        }
+        return;
+        Redirect::back()->with("result",["class" => "alert-success", "text" => "Данные успешно загружены"]);
+    }
+
+    public function xml($idCemetery, $filePath)
+    {
+        $file = file_get_contents($filePath);
+
+        $xml = new \SimpleXMLElement($file);
+        foreach ($xml->wpt as $item)
+        {
+            $attributes = $item->attributes();
+            $lat = $attributes["lat"];
+            $lon = $attributes["lon"];
+            $numGrave = ltrim($item->name,"0");
+            $grave = Grave::where("numGrave",$numGrave)
+                ->where("idCemetery",$idCemetery)
+                ->first();
+            if ($grave != null)
+            {
+                $grave->latitude = $lat;
+                $grave->longitude = $lon;
+                $grave->save();
+            }
+
+        }
+
+    }
+
     public function excel()
     {
+
+
         $file = public_path().'/excel.xlsx';
         $objPHPExcel = PHPExcel_IOFactory::createReaderForFile($file);
         $objXLS = $objPHPExcel->load($file);
         $sheet = $objXLS->getSheet(0);
         $startValue = 2;
         $currentRow = $startValue;
-
+        $maxRow = $sheet->getHighestRow();
 
         $data = [];
-        while (true)
+        while ($currentRow < $maxRow)
         {
             $numGrave = $sheet->getCell("A".$currentRow)->getValue();
             $nameCemetery = $sheet->getCell("B".$currentRow)->getValue();
@@ -36,18 +90,25 @@ class ImportController extends Controller
             $memorialMaterial = $sheet->getCell("K".$currentRow)->getValue();
             $sizeMemorial = $sheet->getCell("L".$currentRow)->getValue();
             $state = $sheet->getCell("M".$currentRow)->getValue();
-            $isWow = $sheet->getCell("N".$currentRow)->getValue();
+            $ww2 = $sheet->getCell("N".$currentRow)->getValue();
 
             if ($numGrave != 0)
             {
-//                $grave = new Grave();
-//                $grave->saveFromData($data);
+                if ($data != [])
+                {
+                    $grave = Grave::loadFromData($data);
+                    $grave->save();
 
-                $data = [];
+                    $data = [];
+                }
             }
-            $data[] = ["numGrave" => $numGrave, "nameCemetery" => $nameCemetery, "fioDead" => $fioDead, "yearBorn" => $yearBorn, "yearDeath" => $yearDeath, "numDeads" => $numDeads, "sizeGrave" => $sizeGrave, "hasBorder" => $hasBorder, "border" => $border, "memorial" => $memorial, "memorialMaterial" => $memorialMaterial, "sizeMemorial" => $sizeMemorial, "state" => $state, "isWow" => $isWow];
+            $newRow = ["numGrave" => $numGrave, "nameCemetery" => $nameCemetery, "fioDead" => $fioDead, "yearBorn" => $yearBorn, "yearDeath" => $yearDeath, "numDeads" => $numDeads, "sizeGrave" => $sizeGrave, "hasBorder" => $hasBorder, "border" => $border, "memorial" => $memorial, "memorialMaterial" => $memorialMaterial, "sizeMemorial" => $sizeMemorial, "state" => $state, "ww2" => $ww2];
+            $data[] = $newRow;
+            $currentRow++;
         }
 
+
+        var_dump($currentRow);
         return "";
 
     }

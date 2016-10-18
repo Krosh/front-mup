@@ -19,6 +19,9 @@ Route::get("/migrate",function()
 Route::group(["prefix" => "import"], function()
 {
     Route::get("excel", "ImportController@excel");
+    Route::get("xml", "ImportController@xml");
+    Route::get("load", "ImportController@load_xml");
+    Route::post("save", "ImportController@save_xml");
 
 });
 

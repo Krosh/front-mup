@@ -35,5 +35,58 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Dead extends Model
 {
-    //
+
+    public function findDuplicate()
+    {
+        $duplicate = Dead::where("idGrave",$this->idGrave)
+            ->where("family",$this->family)
+            ->where("name",$this->name)
+            ->where("patron",$this->patron)
+            ->first();
+
+        return $duplicate;
+    }
+
+    public function setYearBorn($value)
+    {
+        $this->yearBorn = $value * 1;
+    }
+
+    public function setYearDeath($value)
+    {
+        $this->yearDeath = $value * 1;
+    }
+
+    public function copyFrom(Dead $item)
+    {
+        $this->yearBorn = $item->yearBorn;
+        $this->yearDeath = $item->yearDeath;
+        $this->memorialMaterial = $item->memorialMaterial;
+        $this->memorial = $item->memorial;
+        $this->sizeMemorial = $item->sizeMemorial;
+    }
+
+    public function parseFio($fio)
+    {
+        $this->family = "";
+        $this->name = "";
+        $this->patron = "";
+
+        $fio = trim($fio);
+        $elements = explode(" ",$fio);
+        $elements = array_filter($elements,function($elem) {
+            return strlen($elem) > 0;
+        });
+        $elements = array_map(function($elem) {
+            return mb_strtoupper(mb_substr($elem,0,1)).mb_substr($elem,1);
+
+        }, $elements);
+
+        if (count($elements)>0)
+            $this->family = $elements[0];
+        if (count($elements)>1)
+            $this->name = $elements[1];
+        if (count($elements)>2)
+            $this->patron = $elements[2];
+    }
 }

@@ -55,7 +55,8 @@ class GraveTest extends TestCase
     public function testMakeFromData()
     {
         $data = [];
-        $data[] = ["numGrave" => 1, "nameCemetery" => "Кладбище п.Ерестной", "fioDead" => "", "yearBorn" => 1970, "yearDeath" => 2011, "numDeads" => 1, "sizeGrave" => "2600x1200", "hasBorder" => "да", "border" => "дерево", "memorial" => "", "memorialMaterial" => "", "sizeMemorial" => "", "state" => "удовлетворительно", "ww2" => "да"];
+        $data[] = ["numGrave" => 1, "nameCemetery" => "Кладбище п.Ерестной", "fioDead" => "Иванов Иван Иванович", "yearBorn" => 1970, "yearDeath" => 2011, "numDeads" => 2, "sizeGrave" => "2600x1200", "hasBorder" => "да", "border" => "дерево", "memorial" => "Крест", "memorialMaterial" => "Бетон", "sizeMemorial" => "20x20x20", "state" => "удовлетворительно", "ww2" => "да"];
+        $data[] = ["numGrave" => "", "nameCemetery" => "Кладбище п.Ерестной", "fioDead" => "Петров Петр Петрович", "yearBorn" => 1980, "yearDeath" => 2003, "numDeads" => "", "sizeGrave" => "", "hasBorder" => "да", "border" => "", "memorial" => "Памятник", "memorialMaterial" => "Дерево", "sizeMemorial" => "10x20x30", "state" => "удовлетворительно", "ww2" => "да"];
         $grave = new Grave();
         $grave->makeFromData($data);
         $this->assertEquals($grave->idCemetery,1,"Cemetery is wrong");
@@ -65,6 +66,7 @@ class GraveTest extends TestCase
         $this->assertEquals($grave->sizeGrave,"2600x1200","sizeGrave is wrong");
         $this->assertEquals($grave->border,"дерево","border is wrong");
         $this->assertEquals($grave->numGrave,"1","numGrave is wrong");
+        $this->assertEquals(count($grave->getDeads()),2,"num deads is wrong");
 
         $data = [];
         $data[] = ["numGrave" => 1, "nameCemetery" => "Кладбище п.Ерестной", "fioDead" => "", "yearBorn" => 1970, "yearDeath" => 2011, "numDeads" => 1, "sizeGrave" => "2600x1200", "hasBorder" => "да", "border" => "дерево", "memorial" => "", "memorialMaterial" => "", "sizeMemorial" => "", "state" => "неудовлетворительно", "ww2" => ""];

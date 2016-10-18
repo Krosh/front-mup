@@ -33,6 +33,10 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @property string $numGrave
  * @method static \Illuminate\Database\Query\Builder|\App\Grave whereNumGrave($value)
+ * @property float $latitude
+ * @property float $longitude
+ * @method static \Illuminate\Database\Query\Builder|\App\Grave whereLatitude($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Grave whereLongitude($value)
  */
 class Grave extends Model
 {
@@ -93,6 +97,81 @@ class Grave extends Model
     }
 
 
+    private  $_deads = [];
+
+    /**
+     * @return Dead[]
+     */
+    public function getDeads()
+    {
+        return $this->_deads;
+    }
+
+    private function addDead($fio, $yearBorn,$yearDeath,$memorial,$sizeMemorial,$memorialMaterial)
+    {
+        $dead = new Dead();
+        $dead->parseFio($fio);
+        $dead->setYearBorn($yearBorn);
+        $dead->setYearDeath($yearDeath);
+        $dead->memorial = $memorial;
+        $dead->sizeMemorial = $sizeMemorial;
+        $dead->memorialMaterial = $memorialMaterial;
+        $this->_deads[] = $dead;
+        $this->numDeads++;
+    }
+
+
+    public function save(array $options = [])
+    {
+        $this->numDeads = count($this->_deads);
+        if (!parent::save($options))
+            return false;
+
+        foreach ($this->getDeads() as $dead)
+        {
+            $dead->idGrave = $this->id;
+        }
+
+        $this->_deads = array_map(function($item)
+        {
+            $duplicate = $item->findDuplicate();
+            if ($duplicate == null)
+                return $item;
+            else
+            {
+                $duplicate->copyFrom($item);
+                return $duplicate;
+            }
+        },$this->_deads);
+
+       foreach ($this->getDeads() as $dead)
+        {
+            if (!$dead->save())
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static function loadFromData($data)
+    {
+        $grave = new Grave();
+        $grave->makeFromData($data);
+
+        $duplicate = Grave::where("numGrave",$grave->numGrave)
+            ->where("idCemetery",$grave->idCemetery)
+            ->first();
+        if ($duplicate == null)
+        {
+            return $grave;
+        }  else
+        {
+            $duplicate->makeFromData($data);
+            return $duplicate;
+        }
+    }
+
     public function makeFromData($data)
     {
         $this->setCemeteryByString($data[0]["nameCemetery"]);
@@ -103,6 +182,7 @@ class Grave extends Model
         $ww2 = "";
         $sizeGrave = "";
         $numGrave = "";
+        $this->_deads = [];
         for ($i = 0; $i<count($data); $i++)
         {
             $numGrave = ($data[$i]["numGrave"] != "") ? $data[$i]["numGrave"] : $numGrave;
@@ -110,6 +190,13 @@ class Grave extends Model
             $border = ($data[$i]["border"] != "") ? $data[$i]["border"] : $border;
             $ww2 = ($data[$i]["ww2"] != "") ? $data[$i]["ww2"] : $ww2;
             $sizeGrave = ($data[$i]["sizeGrave"] != "") ? $data[$i]["sizeGrave"] : $sizeGrave;
+            $fio = $data[$i]["fioDead"];
+            $yearBorn = $data[$i]["yearBorn"];
+            $yearDeath = $data[$i]["yearDeath"];
+            $memorial = $data[$i]["memorial"];
+            $memorialMaterial = $data[$i]["memorialMaterial"];
+            $sizeMemorial = $data[$i]["sizeMemorial"];
+            $this->addDead($fio,$yearBorn,$yearDeath,$memorial,$sizeMemorial,$memorialMaterial);
         }
 
         $this->setHasBorderByString($hasBorder);
