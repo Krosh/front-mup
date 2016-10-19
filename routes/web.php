@@ -32,6 +32,7 @@ Route::group(["prefix" => "cemetery"], function()
 
 Route::get("/map","CemeteryController@map");
 
+Route::resource('cities', 'CitiesController');
 
 
 Route::get('/', function () {

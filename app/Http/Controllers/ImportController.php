@@ -25,11 +25,11 @@ class ImportController extends Controller
     public function save_xml(Request $request)
     {
         $idCemetery = $request->get("cemetery");
-//        foreach ($request->file("xml") as $file)
-//        {
-//            $filePath = $file->getRealPath();
-//            $this->xml($idCemetery, $filePath);
-//        }
+        foreach ($request->file("xml") as $file)
+        {
+            $filePath = $file->getRealPath();
+            $this->xml($idCemetery, $filePath);
+        }
         return back()->with("result",["class" => "alert-success", "text" => "Данные успешно загружены"]);
     }
 

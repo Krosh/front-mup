@@ -6,10 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 
 /**
- * App\Grave
+ * App\Models\Grave
  *
  * @property integer $id
- * @property string $name
  * @property integer $idCemetery
  * @property integer $numDeads
  * @property string $sizeGrave
@@ -19,24 +18,23 @@ use Illuminate\Database\Eloquent\Model;
  * @property boolean $ww2
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @method static \Illuminate\Database\Query\Builder|\App\Grave whereId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Grave whereName($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Grave whereIdCemetery($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Grave whereNumDeads($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Grave whereSizeGrave($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Grave whereHasBorder($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Grave whereBorder($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Grave whereState($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Grave whereWw2($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Grave whereCreatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Grave whereUpdatedAt($value)
- * @mixin \Eloquent
  * @property string $numGrave
- * @method static \Illuminate\Database\Query\Builder|\App\Grave whereNumGrave($value)
  * @property float $latitude
  * @property float $longitude
- * @method static \Illuminate\Database\Query\Builder|\App\Grave whereLatitude($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Grave whereLongitude($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereId($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereIdCemetery($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereNumDeads($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereSizeGrave($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereHasBorder($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereBorder($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereState($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereWw2($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereCreatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereNumGrave($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereLatitude($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereLongitude($value)
+ * @mixin \Eloquent
  */
 class Grave extends Model
 {

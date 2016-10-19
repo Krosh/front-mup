@@ -1,0 +1,41 @@
+@extends('layouts.app')
+
+@section('content')
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Редактироване объекта %%modelName%% {{ $%%crudNameSingular%%->%%primaryKey%% }}</div>
+                    <div class="panel-body">
+
+                        @if ($errors->any())
+                            <ul class="alert alert-danger">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+
+                        {!! Form::model($%%crudNameSingular%%, [
+                            'method' => 'PATCH',
+                            'url' => ['/%%routeGroup%%%%viewName%%', $%%crudNameSingular%%->%%primaryKey%%],
+                            'class' => 'form-horizontal',
+                            'files' => true
+                        ]) !!}
+
+                        %%formFieldsHtml%%
+
+                        <div class="form-group">
+                            <div class="col-md-offset-4 col-md-8">
+                                {!! Form::submit('Сохранить', ['class' => 'btn btn-primary']) !!}
+                                <a href = "<?=url("/%%routeGroup%%%%viewName%%"); ?>" class = "btn btn-warning">Вернуться к списку</a>
+                            </div>
+                        </div>
+                        {!! Form::close() !!}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection

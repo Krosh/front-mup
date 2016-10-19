@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Dead
+ * App\Models\Dead
  *
  * @property integer $id
  * @property integer $idGrave
@@ -19,18 +19,18 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $memorial
  * @property string $sizeMemorial
  * @property string $memorialMaterial
- * @method static \Illuminate\Database\Query\Builder|\App\Dead whereId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Dead whereIdGrave($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Dead whereFamily($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Dead whereName($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Dead wherePatron($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Dead whereYearBorn($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Dead whereYearDeath($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Dead whereCreatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Dead whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Dead whereMemorial($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Dead whereSizeMemorial($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Dead whereMemorialMaterial($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereId($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereIdGrave($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereFamily($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereName($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead wherePatron($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereYearBorn($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereYearDeath($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereCreatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereMemorial($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereSizeMemorial($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereMemorialMaterial($value)
  * @mixin \Eloquent
  */
 class Dead extends Model

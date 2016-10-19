@@ -11,7 +11,9 @@
         "barryvdh/laravel-debugbar": "^2.3",
         "barryvdh/laravel-ide-helper": "^2.2",
         "doctrine/dbal": "^2.5",
-        "kris/laravel-form-builder": "^1.9"
+        "kris/laravel-form-builder": "^1.9",
+        "appzcoder/crud-generator": "^1.2",
+        "laravelcollective/html": "^5.3"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

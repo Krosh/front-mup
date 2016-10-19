@@ -4,9 +4,53 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fa0a08acaf7fb119386a95542fb4d0b9",
-    "content-hash": "2e1c2de41020d837be677374a0665d4c",
+    "hash": "da08f4fcc9db792318644147d510b874",
+    "content-hash": "ff79d45f538f4c525fc4db4d56a102b9",
     "packages": [
+        {
+            "name": "appzcoder/crud-generator",
+            "version": "v1.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/appzcoder/crud-generator.git",
+                "reference": "9dbb84c96a9642b17532c5fd263bdee2433c0adf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/appzcoder/crud-generator/zipball/9dbb84c96a9642b17532c5fd263bdee2433c0adf",
+                "reference": "9dbb84c96a9642b17532c5fd263bdee2433c0adf",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~5.1",
+                "php": ">=5.5.9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Appzcoder\\CrudGenerator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sohel Amin",
+                    "email": "sohelamincse@gmail.com",
+                    "homepage": "http://www.appzcoder.com"
+                }
+            ],
+            "description": "Laravel 5 CRUD Generator",
+            "keywords": [
+                "crud",
+                "crud generator",
+                "laravel",
+                "laravel crud generator"
+            ],
+            "time": "2016-09-27 15:20:36"
+        },
         {
             "name": "barryvdh/laravel-debugbar",
             "version": "v2.3.0",
