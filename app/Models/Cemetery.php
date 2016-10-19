@@ -24,6 +24,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Cemetery extends Model
 {
+    protected $fillable = ['name','cadastr_num','idCity'];
+
     public function getCoords()
     {
         return CemeteryCoord::where("idCemetery",$this->id)

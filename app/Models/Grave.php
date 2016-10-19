@@ -45,14 +45,7 @@ class Grave extends Model
 
     public function setCemeteryByString($name)
     {
-        $cemetery = Cemetery::where("name",$name)
-            ->first();
-        if ($cemetery == null)
-        {
-            $cemetery = new Cemetery();
-            $cemetery->name = $name;
-            $cemetery->save();
-        }
+        $cemetery = Cemetery::firstOrCreate(["name" => $name]);
         $this->idCemetery = $cemetery->id;
     }
 

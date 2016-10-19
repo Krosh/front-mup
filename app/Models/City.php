@@ -20,5 +20,16 @@ use Illuminate\Database\Eloquent\Model;
  */
 class City extends Model
 {
+    public static function allInList($idColumn,$nameColumn)
+    {
+        $models = self::all();
+        $result = [];
+        foreach ($models as $item)
+        {
+            $result[$item->$idColumn] = $item->$nameColumn;
+        }
+        return $result;
+    }
+
     protected $fillable = ['name'];
 }
