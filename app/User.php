@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Models;
+namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 
 /**
- * App\Models\User
+ * App\User
  *
  * @property integer $id
  * @property string $name
@@ -48,4 +48,6 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+
 }

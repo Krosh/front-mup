@@ -20,6 +20,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class City extends Model
 {
+    public function __toString()
+    {
+        return $this->name;
+    }
+
     public static function allInList($idColumn,$nameColumn)
     {
         $models = self::all();

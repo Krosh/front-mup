@@ -15,7 +15,7 @@
                             <table class="table table-borderless">
                                 <thead>
                                     <tr>
-                                        <th> Name </th><th>Действия</th>
+                                        <th> Наименование </th><th>Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>

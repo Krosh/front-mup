@@ -32,4 +32,9 @@ class Cemetery extends Model
             ->orderBy("num_point","ASC")
             ->get();
     }
+
+    public function getCity()
+    {
+        return City::find($this->idCity);
+    }
 }

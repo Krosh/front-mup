@@ -15,13 +15,13 @@
                             <table class="table table-borderless">
                                 <thead>
                                     <tr>
-                                        <th> Name </th><th> Cadastr Num </th><th> IdCity </th><th>Действия</th>
+                                        <th> Наименование </th><th> Кадастровый номер</th><th> Город</th><th>Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($cemeteries as $item)
                                     <tr>
-                                        <td>{{ $item->name }}</td><td>{{ $item->cadastr_num }}</td><td>{{ $item->idCity }}</td>
+                                        <td>{{ $item->name }}</td><td>{{ $item->cadastr_num }}</td><td>{{ $item->getCity() }}</td>
                                         <td>
                                             <a href="{{ url('/cemeteries/' . $item->id . '/edit') }}" class="btn btn-primary btn-xs" title="Редактировать"><span class="glyphicon glyphicon-pencil" aria-hidden="true"/></a>
                                             {!! Form::open([
