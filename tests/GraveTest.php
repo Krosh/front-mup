@@ -1,6 +1,7 @@
 <?php
 
-use App\Grave;
+use App\Models\Cemetery;
+use App\Models\Grave;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -21,7 +22,7 @@ class GraveTest extends TestCase
 
     public function testCemetery()
     {
-        $cemetery = \App\Cemetery::whereId(1)->first();
+        $cemetery = Cemetery::whereId(1)->first();
         $grave = new Grave();
         $grave->setCemeteryByString($cemetery->name);
         $this->assertEquals($grave->idCemetery,$cemetery->id);

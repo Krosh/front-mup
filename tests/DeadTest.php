@@ -1,6 +1,6 @@
 <?php
 
-use App\Dead;
+use App\Models\Dead;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;

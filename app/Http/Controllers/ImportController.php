@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Cemetery;
-use App\Dead;
 use App\Forms\UploadXmlForm;
-use App\Grave;
+use App\Models\Grave;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
-use Illuminate\Support\Facades\Redirect;
 use Kris\LaravelFormBuilder\FormBuilder;
 use PHPExcel_IOFactory;
 
@@ -28,13 +25,12 @@ class ImportController extends Controller
     public function save_xml(Request $request)
     {
         $idCemetery = $request->get("cemetery");
-        foreach ($request->file("xml") as $file)
-        {
-            $filePath = $file->getRealPath();
-            $this->xml($idCemetery, $filePath);
-        }
-        return;
-        Redirect::back()->with("result",["class" => "alert-success", "text" => "Данные успешно загружены"]);
+//        foreach ($request->file("xml") as $file)
+//        {
+//            $filePath = $file->getRealPath();
+//            $this->xml($idCemetery, $filePath);
+//        }
+        return back()->with("result",["class" => "alert-success", "text" => "Данные успешно загружены"]);
     }
 
     public function xml($idCemetery, $filePath)

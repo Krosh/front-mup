@@ -1,0 +1,133 @@
+﻿<riot-leaflet>
+    <div class = "map"></div>
+    <script>
+        var tag = this;
+        tag.layerControl = null;
+        var _layers = [];
+
+
+        // TODO:: remove to mixin
+        getOption(name,defaultValue) {
+            return opts[name] || defaultValue;
+        }
+
+        alreadyLoadedScripts() {
+            return document.getElementById('riot-leaflet_scripts');
+        }
+
+        loadScripts() {
+            if (tag.alreadyLoadedScripts())
+                return;
+            let head = document.getElementsByTagName('head')[0]
+            let script = document.createElement('script')
+            script.setAttribute('id', 'riot-leaflet_scripts')
+            script.type = 'text/javascript'
+            script.src = 'https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js'
+            script.onreadystatechange = script.onload = () => {
+                // loading dvf scripts and css files
+                let script = document.createElement('script')
+                script.type = 'text/javascript'
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet-dvf/0.3.0/leaflet-dvf.js'
+                script.onreadystatechange = script.onload = tag.mountMap
+                document.body.appendChild(script)
+
+                let cssFile = document.createElement('link')
+                cssFile.rel = 'stylesheet'
+                cssFile.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet-dvf/0.3.0/css/dvf.min.css'
+                document.body.appendChild(cssFile)
+            }
+
+            document.body.appendChild(script)
+            let cssFile = document.createElement('link')
+            cssFile.rel = 'stylesheet'
+            cssFile.href = 'https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.css'
+            document.body.appendChild(cssFile)
+
+        }
+
+
+
+
+        getDefaultLayers() {
+            return [
+                {
+                    url: "http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+                    name: "Google",
+                    params: {
+                        maxZoom: 20,
+                        subdomains:['mt0','mt1','mt2','mt3']
+                    }
+                },
+                {
+                    url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
+                    name: "OSM",
+                    params: {
+                        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                    }
+                },
+            ]
+        }
+
+        loadMapLayers(layers) {
+            let result = {};
+            let lastLayer = {};
+            layers.forEach(function(item) {
+                let layer = L.tileLayer(item.url, item.params);
+                result[item.name] = layer;
+                lastLayer = layer;
+            });
+            tag.layerControl = new L.Control.Layers(result);
+            tag.map.addControl(tag.layerControl);
+            tag.map.addLayer(lastLayer);
+        }
+
+        addGeoJsonLayer(name,data) {
+            let layer = new L.geoJson([],{});
+            data.features.forEach(function(item) {
+                layer.addData(item);
+            });
+            layer.addTo(tag.map);
+            _layers[name] = layer;
+            return layer;
+        }
+
+        addChartLayer(name) {
+            let layer = new L.LayerGroup();
+
+            tag.map.addLayer(layer);
+            tag.layerControl.addOverlay(layer, name);
+            layer.addTo(tag.map);
+            _layers[name] = layer;
+            return layer;
+        }
+
+        getLayer(name) {
+            return _layers[name];
+        }
+
+         mountMap() {
+            let centerPos = tag.getOption("centerPos",[53.315408, 83.822352]);
+            let zoom = tag.getOption("zoom",12);
+            tag.zoom = zoom;
+            tag.map = L.map(tag.root.querySelector(".map")).setView(centerPos, zoom);
+            let layers = tag.getOption("layers",tag.getDefaultLayers());
+            tag.loadMapLayers(layers);
+            if (typeof opts.onMountMap !== "undefined")
+                opts.onMountMap.call(tag);
+        }
+
+        tag.on('mount', () => {
+            tag.loadScripts();
+
+        });
+
+    </script>
+    <style scoped>
+        .map {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</riot-leaflet>

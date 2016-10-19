@@ -2,7 +2,7 @@
 
 namespace App\Forms;
 
-use App\Cemetery;
+use App\Models\Cemetery;
 use Kris\LaravelFormBuilder\Form;
 
 class UploadXmlForm extends Form
@@ -22,6 +22,6 @@ class UploadXmlForm extends Form
                 "empty_value" => "Выберите кладбище",
             ] )
             ->add('xml', 'file',['attr' => ['multiple'=>true]])
-            ->add('submit', 'submit', ['label' => 'Загрузить на сервер']);
+            ->add('submit', 'submit', ['label' => 'Загрузить на сервер', "attr" => ["class" => "btn btn-primary"] ]);
     }
 }
