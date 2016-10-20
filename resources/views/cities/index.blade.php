@@ -5,10 +5,10 @@
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Cities</div>
+                    <div class="panel-heading">Города</div>
                     <div class="panel-body">
 
-                        <a href="{{ url('/cities/create') }}" class="btn btn-primary" title="Добавить новый элемент city">Добавить новый элемент city</a>
+                        <a href="{{ url('/cities/create') }}" class="btn btn-primary" title="Добавить новый элемент city">Добавить новый город</a>
                         <br/>
                         <br/>
                         <div class="table-responsive">

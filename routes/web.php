@@ -30,10 +30,13 @@ Route::group(["prefix" => "cemetery"], function()
     Route::get("{idCemetery}","CemeteryController@view");
 });
 
+
 Route::get("/map","CemeteryController@map");
 
 Route::resource('cities', 'CitiesController');
+
 Route::resource('cemeteries', 'CemeteriesController');
+Route::post("/cemeteries/{id}/cadastr", "CemeteriesController@cadastr");
 
 
 Route::get('/', function () {

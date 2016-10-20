@@ -39,10 +39,10 @@ class CemeteriesController extends Controller
      */
     public function create(FormBuilder $formBuilder)
     {
-       $form = $formBuilder->create(CemeteryForm::class, [
-            'method' => 'POST',
-            'url' => url("/cemeteries"),
-        ]);
+        $form = $formBuilder->create(CemeteryForm::class, [
+        'method' => 'POST',
+        'url' => url("/cemeteries"),
+    ]);
         return view('cemeteries.create',["form" => $form]);
     }
 
@@ -55,9 +55,9 @@ class CemeteriesController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $requestData = $request->all();
-        
+
         Cemetery::create($requestData);
 
         Session::flash('flash_message', 'Cemetery added!');
@@ -94,7 +94,7 @@ class CemeteriesController extends Controller
             'url' => url('/cemeteries',[$cemetery->id]),
             'model' => $cemetery,
 
-        ]);
+         ]);
 
         return view('cemeteries.edit', ["cemetery" => $cemetery, "form" => $form]);
     }
@@ -109,9 +109,9 @@ class CemeteriesController extends Controller
      */
     public function update($id, Request $request)
     {
-        
+
         $requestData = $request->all();
-        
+
         $cemetery = Cemetery::findOrFail($id);
         $cemetery->update($requestData);
 
@@ -136,4 +136,40 @@ class CemeteriesController extends Controller
 
         return redirect('cemeteries');
     }
+
+
+    public function cadastr($id, Request $request)
+    {
+        $cadastr_num = $request->get("cadastr_num");
+        $cemetery = Cemetery::findOrFail($id);
+        if ($cemetery->cadastr_num != $cadastr_num)
+        {
+            $cemetery->cadastr_num = $cadastr_num;
+            $cemetery->loadCoords();
+            $cemetery->save();
+        }
+        $result = [];
+        $result["type"] = "FeatureCollection";
+        $result["features"] = [];
+        $cemeteryFeature = [];
+        $cemeteryFeature["type"] = "Feature";
+        $cemeteryFeature["geometry"] = [];
+        $cemeteryFeature["geometry"]["type"] = "Polygon";
+        $cemeteryFeature["geometry"]["coordinates"] = [];
+        $cemeteryFeature["geometry"]["coordinates"][0] = [];
+        $cemeteryFeature["properties"]["name"] = $cemetery->name;
+//        $cemeteryFeature["properties"]["popup"] = $district->getPopupText();
+        $points = $cemetery->getCoords();
+        foreach ($points as $point)
+        {
+            $coords = [$point->longitude*1,$point->latitude*1];
+            $cemeteryFeature["geometry"]["coordinates"][0][] = $coords;
+        }
+//        $cemeteryFeature["geometry"]["coordinates"][0][] = $cemeteryFeature["geometry"]["coordinates"][0][0];
+        $result["features"][] = $cemeteryFeature;
+
+        return $result;
+
+    }
+
 }

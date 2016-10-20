@@ -5,10 +5,10 @@
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Cemeteries</div>
+                    <div class="panel-heading">Список кладбищ</div>
                     <div class="panel-body">
 
-                        <a href="{{ url('/cemeteries/create') }}" class="btn btn-primary" title="Добавить новый элемент cemetery">Добавить новый элемент cemetery</a>
+                        <a href="{{ url('/cemeteries/create') }}" class="btn btn-primary" title="Добавить новый элемент cemetery">Добавить новое кладбище</a>
                         <br/>
                         <br/>
                         <div class="table-responsive">

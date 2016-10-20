@@ -37,4 +37,41 @@ class Cemetery extends Model
     {
         return City::find($this->idCity);
     }
+
+    public function loadCoords()
+    {
+        $url = "http://getpkk.ru/get/{$this->cadastr_num}/1";
+
+        $data = json_decode(file_get_contents($url));
+
+        $coords = $data->coordinates[0][0];
+
+        $numCoords = CemeteryCoord::where("idCemetery",$this->id)
+            ->count();
+        if ($numCoords <> count($coords))
+        {
+            CemeteryCoord::where("idCemetery",$this->id)
+                ->delete();
+            $i = 0;
+            foreach ($coords as $item)
+            {
+                $coord = new CemeteryCoord();
+                $coord->idCemetery = $this->id;
+                $coord->num_point = $i++;
+                $coord->longitude = $item[0];
+                $coord->latitude = $item[1];
+                $coord->save();
+            }
+        }
+    }
+
+    public function save(array $options = [])
+    {
+        if ($this->exists && $this->isDirty("cadastr_num"))
+            $this->loadCoords();
+
+        return parent::save($options);
+
+    }
+
 }
