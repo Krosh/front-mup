@@ -44,6 +44,11 @@ class Cemetery extends Model
 
         $data = json_decode(file_get_contents($url));
 
+        if (!isset($data) || !isset($data->coordinates))
+        {
+            return false;
+        }
+
         $coords = $data->coordinates[0][0];
 
         $numCoords = CemeteryCoord::where("idCemetery",$this->id)
@@ -63,6 +68,7 @@ class Cemetery extends Model
                 $coord->save();
             }
         }
+        return true;
     }
 
     public function save(array $options = [])

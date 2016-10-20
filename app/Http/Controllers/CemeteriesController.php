@@ -145,9 +145,14 @@ class CemeteriesController extends Controller
         if ($cemetery->cadastr_num != $cadastr_num)
         {
             $cemetery->cadastr_num = $cadastr_num;
-            $cemetery->loadCoords();
+            if (!$cemetery->loadCoords())
+                abort(404);
             $cemetery->save();
         }
+        $points = $cemetery->getCoords();
+        if (count($points) == 0)
+            abort(404);
+
         $result = [];
         $result["type"] = "FeatureCollection";
         $result["features"] = [];
@@ -159,7 +164,6 @@ class CemeteriesController extends Controller
         $cemeteryFeature["geometry"]["coordinates"][0] = [];
         $cemeteryFeature["properties"]["name"] = $cemetery->name;
 //        $cemeteryFeature["properties"]["popup"] = $district->getPopupText();
-        $points = $cemetery->getCoords();
         foreach ($points as $point)
         {
             $coords = [$point->longitude*1,$point->latitude*1];

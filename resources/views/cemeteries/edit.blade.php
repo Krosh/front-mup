@@ -48,7 +48,11 @@
                                                 let layer = map.addGeoJsonLayer(cadastr_num,data);
                                                 layer.bringToBack();
                                                 map.map.fitBounds(layer.getBounds());
+                                                $('#cadastr_num').parent().removeClass("has-error").addClass("has-success");
                                              })
+                                           .on('404', function(data){
+                                                $('#cadastr_num').parent().addClass("has-error").removeClass("has-success");
+                                            })
                                         .go();
                                         return false;
                                     }).click();
