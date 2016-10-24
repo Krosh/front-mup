@@ -38,6 +38,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Grave extends Model
 {
+    protected $fillable = ['sizeGrave','hasBorder','border'];
+
+
     public static $STATE_OK = 1;
     public static $STATE_NON_OK = 2;
     public static $STATE_FORGOTTEN = 3;
@@ -196,9 +199,13 @@ class Grave extends Model
         $this->numGrave = $numGrave;
 
         $this->setWw2ByString($ww2);
-
     }
 
+    public function loadDeads()
+    {
+        $this->_deads = Dead::where("idGrave",$this->id)
+            ->get();
+    }
 
     //
 }

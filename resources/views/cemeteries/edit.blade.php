@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
-                <div class="panel-heading">Редактироване объекта cemetery {{ $cemetery->id }}</div>
+                <div class="panel-heading">Редактироване кладбища  {{ $cemetery->name }}</div>
                 <div class="panel-body">
 
                     @if ($errors->any())
@@ -38,19 +38,19 @@
                                     {
                                         let cadastr_num = $("#cadastr_num").val();
                                         if (cadastr_num == "")
-                                            return
+                                            return;
                                         aja()
                                             .method("post")
                                             .url('<?=url("/cemeteries/".$cemetery->id."/cadastr"); ?>')
                                             .header('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'))
                                             .data({cadastr_num: cadastr_num})
-                                            .on('success', (data) => {
+                                            .on('success', function(data){
                                                 let layer = map.addGeoJsonLayer(cadastr_num,data);
                                                 layer.bringToBack();
                                                 map.map.fitBounds(layer.getBounds());
                                                 $('#cadastr_num').parent().removeClass("has-error").addClass("has-success");
-                                             })
-                                           .on('404', function(data){
+                                            })
+                                            .on('404', function(data){
                                                 $('#cadastr_num').parent().addClass("has-error").removeClass("has-success");
                                             })
                                         .go();

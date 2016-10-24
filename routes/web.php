@@ -38,6 +38,10 @@ Route::resource('cities', 'CitiesController');
 Route::resource('cemeteries', 'CemeteriesController');
 Route::post("/cemeteries/{id}/cadastr", "CemeteriesController@cadastr");
 
+Route::resource('graves', 'GravesController');
+
+Route::resource('deads', 'DeadsController');
+
 
 Route::get('/', function () {
     return view('welcome');

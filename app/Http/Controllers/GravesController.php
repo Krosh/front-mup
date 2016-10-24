@@ -1,16 +1,24 @@
 <?php
 
-namespace DummyNamespace;
+namespace App\Http\Controllers;
 
-use DummyRootNamespaceHttp\Requests;
-use DummyRootNamespaceHttp\Controllers\Controller;
+use App\Forms\GraveForm;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
 
-use DummyRootNamespaceModels\{{modelName}};
+use Kris\LaravelFormBuilder\FormBuilder;
+use App\Models\Grave;
 use Illuminate\Http\Request;
 use Session;
 
-class DummyClass extends Controller
+class GravesController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -18,9 +26,9 @@ class DummyClass extends Controller
      */
     public function index()
     {
-        ${{crudName}} = {{modelName}}::paginate({{pagination}});
+        $graves = Grave::paginate(25);
 
-        return view('{{viewPath}}{{viewName}}.index', compact('{{crudName}}'));
+        return view('graves.index', compact('graves'));
     }
 
     /**
@@ -30,7 +38,7 @@ class DummyClass extends Controller
      */
     public function create()
     {
-        return view('{{viewPath}}{{viewName}}.create');
+        return view('graves.create');
     }
 
     /**
@@ -42,14 +50,14 @@ class DummyClass extends Controller
      */
     public function store(Request $request)
     {
-        {{validationRules}}
+        
         $requestData = $request->all();
-        {{fileSnippet}}
-        {{modelName}}::create($requestData);
+        
+        Grave::create($requestData);
 
-        Session::flash('flash_message', '{{modelName}} added!');
+        Session::flash('flash_message', 'Grave added!');
 
-        return redirect('{{routeGroup}}{{viewName}}');
+        return redirect('graves');
     }
 
     /**
@@ -61,9 +69,9 @@ class DummyClass extends Controller
      */
     public function show($id)
     {
-        ${{crudNameSingular}} = {{modelName}}::findOrFail($id);
+        $grave = Grave::findOrFail($id);
 
-        return view('{{viewPath}}{{viewName}}.show', compact('{{crudNameSingular}}'));
+        return view('graves.show', compact('grave'));
     }
 
     /**
@@ -73,11 +81,20 @@ class DummyClass extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function edit($id)
+    public function edit($id, FormBuilder $formBuilder)
     {
-        ${{crudNameSingular}} = {{modelName}}::findOrFail($id);
+        $grave = Grave::findOrFail($id);
+        $grave->loadDeads();
 
-        return view('{{viewPath}}{{viewName}}.edit', compact('{{crudNameSingular}}'));
+        $form = $formBuilder->create(GraveForm::class, [
+            'method' => 'PATCH',
+            'url' => url('/graves',[$grave->id]),
+            'model' => $grave,
+        ]);
+
+        $deads = $grave->getDeads();
+
+        return view('graves.edit', ["grave" => $grave, "form" => $form, "deads" => $deads]);
     }
 
     /**
@@ -90,15 +107,15 @@ class DummyClass extends Controller
      */
     public function update($id, Request $request)
     {
-        {{validationRules}}
+        
         $requestData = $request->all();
-        {{fileSnippet}}
-        ${{crudNameSingular}} = {{modelName}}::findOrFail($id);
-        ${{crudNameSingular}}->update($requestData);
+        
+        $grave = Grave::findOrFail($id);
+        $grave->update($requestData);
 
-        Session::flash('flash_message', '{{modelName}} updated!');
+        Session::flash('flash_message', 'Grave updated!');
 
-        return redirect('{{routeGroup}}{{viewName}}');
+        return redirect('graves');
     }
 
     /**
@@ -110,10 +127,10 @@ class DummyClass extends Controller
      */
     public function destroy($id)
     {
-        {{modelName}}::destroy($id);
+        Grave::destroy($id);
 
-        Session::flash('flash_message', '{{modelName}} deleted!');
+        Session::flash('flash_message', 'Grave deleted!');
 
-        return redirect('{{routeGroup}}{{viewName}}');
+        return redirect('graves');
     }
 }
