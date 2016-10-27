@@ -1,5 +1,12 @@
 @extends('layouts.app')
 
+@section('breadcrumbs')
+<ol class="breadcrumb">
+    <li><a href="{{url('/')}}">Главная</a></li>
+    <li class="active">Кладбища - управление</li>
+</ol>
+@endsection
+
 @section('content')
     <div class="container">
         <div class="row">

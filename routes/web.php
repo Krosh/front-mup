@@ -35,10 +35,14 @@ Route::get("/map","CemeteryController@map");
 
 Route::resource('cities', 'CitiesController');
 
+Route::get("/cemeteries/geojson", "CemeteriesController@geojson");
 Route::resource('cemeteries', 'CemeteriesController');
 Route::post("/cemeteries/{id}/cadastr", "CemeteriesController@cadastr");
 
 Route::resource('graves', 'GravesController');
+
+Route::get('/cemeteries/{id}/graves','GravesController@by_cemetery');
+Route::get('/cemeteries/{id}/graves/create','GravesController@add');
 
 Route::resource('deads', 'DeadsController');
 

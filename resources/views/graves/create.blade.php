@@ -16,17 +16,7 @@
                             </ul>
                         @endif
 
-                        {!! Form::open(['url' => '/graves', 'class' => 'form-horizontal', 'files' => true]) !!}
-
-                        
-
-                           <div class="form-group">
-                              <div class="col-md-offset-4 col-md-8">
-                                  {!! Form::submit('Сохранить', ['class' => 'btn btn-primary']) !!}
-                                  <a href = "<?=url("/graves"); ?>" class = "btn btn-warning">Вернуться к списку</a>
-                              </div>
-                           </div>
-                        {!! Form::close() !!}
+                        {!! form($form) !!}
 
                     </div>
                 </div>

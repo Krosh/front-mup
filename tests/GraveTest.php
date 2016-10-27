@@ -19,6 +19,18 @@ class GraveTest extends TestCase
         }
     }
 
+    public function testSize()
+    {
+        $grave = new Grave();
+        $grave->setSizeGrave("100x200");
+        $this->assertEquals(20000,$grave->square,$grave->sizeGrave);
+        $grave->setSizeGrave("100Х200");
+        $this->assertEquals(20000,$grave->square,$grave->sizeGrave);
+        $grave->setSizeGrave("100 200");
+        $this->assertEquals(20000,$grave->square,$grave->sizeGrave);
+        $grave->setSizeGrave("фывфыв");
+        $this->assertEquals(0,$grave->square,$grave->sizeGrave);
+    }
 
     public function testCemetery()
     {

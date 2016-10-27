@@ -98,6 +98,8 @@
             </div>
         </nav>
 
+        @yield('breadcrumbs')
+
         @yield('content')
     </div>
 

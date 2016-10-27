@@ -48,7 +48,7 @@
                             @foreach($deads as $item)
                             <tr>
                                 <td>
-                                    {{$item->family}}
+                                    {{$item->getFio() }}
                                 </td>
 
                                 <td>

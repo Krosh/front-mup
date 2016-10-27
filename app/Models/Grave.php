@@ -35,10 +35,20 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereLatitude($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereLongitude($value)
  * @mixin \Eloquent
+ * @property integer $cadastr_size
+ * @property string $cadastr_adres
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereCadastrSize($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereCadastrAdres($value)
+ * @property integer $square
+ * @property float $center_lat
+ * @property float $center_lon
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereSquare($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereCenterLat($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereCenterLon($value)
  */
 class Grave extends Model
 {
-    protected $fillable = ['sizeGrave','hasBorder','border'];
+    protected $fillable = ['sizeGrave','hasBorder','border', "state", "idCemetery"];
 
 
     public static $STATE_OK = 1;
@@ -70,6 +80,11 @@ class Grave extends Model
             $this->state = self::$STATE_FORGOTTEN;
         else
             $this->state = self::$STATE_EMPTY;
+    }
+
+    public static function getStates()
+    {
+        return [self::$STATE_NON_OK => "Неудовлетворительно", self::$STATE_OK => "Удовлетворительно", self::$STATE_FORGOTTEN => "Заброшено"];
     }
 
     public function setHasBorderByString($hasBorder)
@@ -148,6 +163,23 @@ class Grave extends Model
         return true;
     }
 
+    public function setSizeGrave($size)
+    {
+        $this->sizeGrave = $size;
+        $size = mb_strtolower(trim($size));
+        $arr = explode("x",$size);
+        if (count($arr) == 1)
+            $arr = explode("х",$size);
+        if (count($arr) == 1)
+            $arr = explode("*",$size);
+        if (count($arr) == 1)
+            $arr = explode(" ",$size);
+       if (count($arr) == 1)
+            $this->square = 0;
+        else
+            $this->square = $arr[0] * $arr[1];
+    }
+
     public static function loadFromData($data)
     {
         $grave = new Grave();
@@ -195,7 +227,7 @@ class Grave extends Model
 
         $this->setHasBorderByString($hasBorder);
         $this->border = $border;
-        $this->sizeGrave = $sizeGrave;
+        $this->setSizeGrave($sizeGrave);
         $this->numGrave = $numGrave;
 
         $this->setWw2ByString($ww2);

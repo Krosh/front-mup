@@ -66,6 +66,11 @@ class Dead extends Model
         $this->sizeMemorial = $item->sizeMemorial;
     }
 
+    public function getFio()
+    {
+        return $this->family." ".$this->name." ".$this->patron;
+    }
+
     public function parseFio($fio)
     {
         $this->family = "";

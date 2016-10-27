@@ -21,6 +21,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereCadastrNum($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereIdCity($value)
  * @mixin \Eloquent
+ * @property integer $cadastr_size
+ * @property string $cadastr_adres
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereCadastrSize($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereCadastrAdres($value)
  */
 class Cemetery extends Model
 {
@@ -44,10 +48,15 @@ class Cemetery extends Model
 
         $data = json_decode(file_get_contents($url));
 
+
         if (!isset($data) || !isset($data->coordinates))
         {
             return false;
         }
+
+        $this->cadastr_adres = $data->attrs->address;
+        $this->cadastr_size = $data->attrs->area_value;
+        $this->save();
 
         $coords = $data->coordinates[0][0];
 
@@ -78,6 +87,32 @@ class Cemetery extends Model
 
         return parent::save($options);
 
+    }
+
+    public function getAsGeoJson()
+    {
+        $result = [];
+        $result["type"] = "FeatureCollection";
+        $result["features"] = [];
+
+        $cemeteryFeature = [];
+        $cemeteryFeature["type"] = "Feature";
+        $cemeteryFeature["geometry"] = [];
+        $cemeteryFeature["geometry"]["type"] = "Polygon";
+        $cemeteryFeature["geometry"]["coordinates"] = [];
+        $cemeteryFeature["geometry"]["coordinates"][0] = [];
+        $cemeteryFeature["properties"]["id"] = $this->id;
+        $cemeteryFeature["properties"]["name"] = $this->name;
+        $cemeteryFeature["properties"]["adres"] = $this->cadastr_adres;
+        $cemeteryFeature["properties"]["popup"] = $this->name;
+        foreach ($this->getCoords() as $point)
+        {
+            $coords = [$point->longitude*1,$point->latitude*1];
+            $cemeteryFeature["geometry"]["coordinates"][0][] = $coords;
+        }
+//        $cemeteryFeature["geometry"]["coordinates"][0][] = $cemeteryFeature["geometry"]["coordinates"][0][0];
+         $result["features"][] = $cemeteryFeature;
+         return $result;
     }
 
 }

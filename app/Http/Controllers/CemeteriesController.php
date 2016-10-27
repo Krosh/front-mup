@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Cemetery;
 use App\Models\City;
+use App\Models\Grave;
 use Illuminate\Http\Request;
 use Kris\LaravelFormBuilder\FormBuilder;
 use Session;
@@ -95,8 +96,10 @@ class CemeteriesController extends Controller
             'model' => $cemetery,
 
          ]);
+        $graves = Grave::where("idCemetery",$id)
+            ->paginate(25);
 
-        return view('cemeteries.edit', ["cemetery" => $cemetery, "form" => $form]);
+        return view('cemeteries.edit', ["cemetery" => $cemetery, "form" => $form, "graves" => $graves]);
     }
 
     /**
@@ -137,7 +140,25 @@ class CemeteriesController extends Controller
         return redirect('cemeteries');
     }
 
+    public function geojson()
+    {
+        $result = [];
 
+        $cemeteries = Cemetery::all();
+        foreach ($cemeteries as $cemetery)
+        {
+            $result[] = $cemetery->getAsGeoJson();
+        }
+        return $result;
+    }
+
+
+    /**
+     * Load cadastr info from internet
+     * @param $id id of cemetery
+     * @param Request $request request with cadastr_num to set to cemetery
+     * @return array geoJson array
+     */
     public function cadastr($id, Request $request)
     {
         $cadastr_num = $request->get("cadastr_num");
@@ -153,27 +174,9 @@ class CemeteriesController extends Controller
         if (count($points) == 0)
             abort(404);
 
-        $result = [];
-        $result["type"] = "FeatureCollection";
-        $result["features"] = [];
-        $cemeteryFeature = [];
-        $cemeteryFeature["type"] = "Feature";
-        $cemeteryFeature["geometry"] = [];
-        $cemeteryFeature["geometry"]["type"] = "Polygon";
-        $cemeteryFeature["geometry"]["coordinates"] = [];
-        $cemeteryFeature["geometry"]["coordinates"][0] = [];
-        $cemeteryFeature["properties"]["name"] = $cemetery->name;
-//        $cemeteryFeature["properties"]["popup"] = $district->getPopupText();
-        foreach ($points as $point)
-        {
-            $coords = [$point->longitude*1,$point->latitude*1];
-            $cemeteryFeature["geometry"]["coordinates"][0][] = $coords;
-        }
-//        $cemeteryFeature["geometry"]["coordinates"][0][] = $cemeteryFeature["geometry"]["coordinates"][0][0];
-        $result["features"][] = $cemeteryFeature;
-
-        return $result;
-
+        return $cemetery->getAsGeoJson();
     }
+
+
 
 }

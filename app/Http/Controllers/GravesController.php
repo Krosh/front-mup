@@ -6,6 +6,7 @@ use App\Forms\GraveForm;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use App\Models\Cemetery;
 use Kris\LaravelFormBuilder\FormBuilder;
 use App\Models\Grave;
 use Illuminate\Http\Request;
@@ -26,19 +27,35 @@ class GravesController extends Controller
      */
     public function index()
     {
-        $graves = Grave::paginate(25);
-
-        return view('graves.index', compact('graves'));
+        abort(404,"Not used");
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
     public function create()
     {
-        return view('graves.create');
+        abort(404,"Not used");
+    }
+
+    public function by_cemetery($id)
+    {
+        $cemetery = Cemetery::findOrFail($id);
+        $graves = Grave::where("idCemetery",$id)
+            ->paginate(25);
+        return view('graves.index', ["graves" => $graves, "cemetery" => $cemetery]);
+
+    }
+
+    public function add($id, FormBuilder $formBuilder)
+    {
+        $model = new Grave();
+        $model->idCemetery = $id;
+
+        $form = $formBuilder->create(GraveForm::class, [
+            'method' => 'POST',
+            'url' => url('/graves'),
+            'model' => $model,
+        ]);
+
+        return view('graves.create', ["form" => $form]);
     }
 
     /**
@@ -53,11 +70,11 @@ class GravesController extends Controller
         
         $requestData = $request->all();
         
-        Grave::create($requestData);
+        $grave = Grave::create($requestData);
 
         Session::flash('flash_message', 'Grave added!');
 
-        return redirect('graves');
+        return redirect('cemeteries/'.$grave->idCemetery."/graves");
     }
 
     /**
@@ -115,7 +132,7 @@ class GravesController extends Controller
 
         Session::flash('flash_message', 'Grave updated!');
 
-        return redirect('graves');
+        return redirect('cemeteries/'.$grave->idCemetery."/graves");
     }
 
     /**
@@ -127,10 +144,11 @@ class GravesController extends Controller
      */
     public function destroy($id)
     {
-        Grave::destroy($id);
+        $grave = Grave::find($id);
+        $grave->delete();
 
         Session::flash('flash_message', 'Grave deleted!');
 
-        return redirect('graves');
+        return redirect('cemeteries/'.$grave->idCemetery."/graves");
     }
 }

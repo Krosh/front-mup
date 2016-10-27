@@ -72,7 +72,8 @@
     <div class="sidebar left sidebar-card card_cont">
         <div class="card">
             <div class="card_content">
-                <p>123</p>
+                <h1 class="js-name">123</h1>
+                <h3 class="js-adres">123</h3>
             </div>
         </div>
         <div class="popup_close btnCardClose">×</div>
@@ -88,6 +89,7 @@
 
 <script>
    var map;
+   initMapContainer();
    riot.mount("riot-leaflet",{
         zoom: 10,
         centerPos: [53.315408, 83.822352],
@@ -95,26 +97,39 @@
             map = this;
             map.map.zoomControl.setPosition('topright');
             aja()
-                .url('<?=url("/map/districts"); ?>')
+                .url('<?=url("/cemeteries/geojson"); ?>')
                 .on('success', (data) => {
-                    var layer = this.addGeoJsonLayer("cemetery",data);
-                    layer.bringToBack();
-                    this.map.fitBounds(layer.getBounds());
-                })
+                    data.forEach((elem) => {
+                        var layer = this.addGeoJsonLayer("cemetery"+elem.features[0].properties.id,elem);
+                        layer.bringToBack();
+//                        layer.bindPopup(elem.features[0].properties.popup);
+                        layer.on("click",(e) => {
+                            showPanel(elem.features[0].properties);
+                        });
+
+                        console.log(elem.features[0].properties);
+//                        this.map.fitBounds(layer.getBounds());
+                    })
+                  initMapContainer();
+               })
             .go();
          }
     });
 
 
-    initMapContainer();
     // Init jquery events
     $(document).ready(function ()
     {
         $('.default_popup').popup();
-
-
     });
 
+   function showPanel(params)
+   {
+       $(".sidebar.left.sidebar-menu").trigger("sidebar:close");
+       $(".sidebar.left.sidebar-card").fadeIn();
+       $(".card .js-name").text(params.name);
+       $(".card .js-adres").text(params.adres);
+   }
 
 
     function initMapContainer()

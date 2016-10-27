@@ -1,5 +1,14 @@
 @extends('layouts.app')
 
+@section('breadcrumbs')
+<ol class="breadcrumb">
+    <li><a href="{{url('/')}}">Главная</a></li>
+    <li><a href="{{url('/cemeteries')}}">Кладбища</a></li>
+    <li><a href="{{url('/cemeteries/'.$cemetery->id)}}">{{$cemetery->name}}</a></li>
+    <li class="active">Захоронения - управление</li>
+</ol>
+@endsection
+
 @section('content')
     <div class="container">
         <div class="row">
@@ -8,7 +17,7 @@
                     <div class="panel-heading">Захоронения</div>
                     <div class="panel-body">
 
-                        <a href="{{ url('/graves/create') }}" class="btn btn-primary" title="Добавить новый элемент grave">Добавить новый элемент grave</a>
+                        <a href="{{ url('cemeteries/'.$cemetery->id.'/graves/create') }}" class="btn btn-primary" title="Добавить новый элемент grave">Добавить новый элемент grave</a>
                         <br/>
                         <br/>
                         <div class="table-responsive">
