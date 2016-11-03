@@ -32,6 +32,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereSizeMemorial($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereMemorialMaterial($value)
  * @mixin \Eloquent
+ * @property string $dateBorn
+ * @property string $dateDeath
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereDateBorn($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereDateDeath($value)
  */
 class Dead extends Model
 {
@@ -64,6 +68,19 @@ class Dead extends Model
         $this->memorialMaterial = $item->memorialMaterial;
         $this->memorial = $item->memorial;
         $this->sizeMemorial = $item->sizeMemorial;
+    }
+
+    /**
+     * @return Grave
+     */
+    public function getGrave()
+    {
+        return Grave::findOrFail($this->idGrave);
+    }
+
+    public function getCemetery()
+    {
+        return $this->getGrave()->getCemetery();
     }
 
     public function getFio()

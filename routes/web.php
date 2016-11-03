@@ -44,12 +44,16 @@ Route::resource('graves', 'GravesController');
 Route::get('/cemeteries/{id}/graves','GravesController@by_cemetery');
 Route::get('/cemeteries/{id}/graves/create','GravesController@add');
 
+Route::get('/deads/search','DeadsController@search');
+Route::get('/deads/info','DeadsController@info');
 Route::resource('deads', 'DeadsController');
 
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get("/test", "CemeteriesController@test");
 
 Auth::routes();
 

@@ -8,9 +8,8 @@
   box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
   position: fixed;
   color: white;
-  padding: 30px;
-  font-size: 2em;
-  text-align: center;
+  padding: 10px 10px 20px 10px;
+  font-size: 14px;
   z-index: 3; }
 
 .b-main {
@@ -32,12 +31,17 @@
 .b-navigation {
   position: absolute; }
 
-.sidebar-card {
+.sidebar-card, .sidebar-search-card {
+  overflow: auto;
   display: none;
   width: 400px;
   left: 0 !important;
   margin: 20px;
-  background: lightblue; }
+  background: white;
+  color: black !important; }
+  .sidebar-card h3, .sidebar-search-card h3 {
+    text-align: center;
+    font-size: 20px; }
 
 .sidebar-menu {
   width: 340px;
@@ -54,7 +58,6 @@
 .b-find {
   position: fixed;
   z-index: 1;
-  height: 50px;
   margin: 10px;
   background-color: white;
   border-radius: 2px;
@@ -63,10 +66,22 @@
   padding: 10px;
   display: -webkit-box;
   display: flex;
-  -webkit-box-align: center;
-  align-items: center;
   -webkit-box-pack: justify;
-  justify-content: space-between; }
+  justify-content: space-between;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  flex-direction: column; }
+
+.b-find__row {
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  flex-direction: row;
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+  -webkit-box-align: center;
+  align-items: center; }
 
 .btn-menu__pic {
   background-image: url("../images/menu.png");
@@ -84,5 +99,12 @@
 
 .leaflet-pane {
   z-index: 0 !important; }
+
+.card__icon-column {
+  text-align: center;
+  padding: 5px 15px; }
+
+.card__icon-img {
+  width: 35px; }
 
 /*# sourceMappingURL=app.css.map */

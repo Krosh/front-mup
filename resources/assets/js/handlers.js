@@ -2,6 +2,7 @@ $(document).ready(
     function () {
         $(".sidebar.left.sidebar-menu").sidebar();
         $(".sidebar.left.sidebar-card").sidebar();
+        $(".sidebar.left.sidebar-search-card").sidebar();
         $("#btnMenu").click(
             function () {
                 $(".b-shadow").show();
@@ -24,6 +25,11 @@ $(document).ready(
         $(".btnCardClose").click(
             function () {
                 $(".sidebar.left.sidebar-card").fadeOut();
+            }
+        );
+        $(".btnSearchCardClose").click(
+            function () {
+                $(".sidebar.left.sidebar-search-card").fadeOut();
             }
         );
         $(".b-shadow").click(

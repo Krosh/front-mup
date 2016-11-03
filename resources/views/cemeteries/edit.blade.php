@@ -9,6 +9,7 @@
 @endsection
 
 @section('content')
+
 <div class="container">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
@@ -33,8 +34,8 @@
                             </ul>
                             @endif
 
-                            {!! form_start($form) !!}
-                            {!! form_until($form,"cadastr_num") !!}
+                            <?= form_start($form); ?>
+                            <?= form_until($form,"cadastr_num"); ?>
 
                             <a href = "#" class="btn btn-success js-get-cemetery-coords">Получить контуры по кадастровому номеру</a>
                             <div class="col-md-12" style="height: 400px">

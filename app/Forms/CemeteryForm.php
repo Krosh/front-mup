@@ -20,6 +20,20 @@ class CemeteryForm extends Form
                 'rules' => 'required',
                 "label" => "Название"
             ])
+            ->add("watcher_name","text", [
+                "label" => "ФИО смотрителя"
+            ])
+            ->add("watcher_phone","text", [
+                "label" => "Телефон смотрителя"
+            ])
+            ->add("organisation_name","text", [
+                "label" => "Наименование обслуживающей организации"
+            ])
+            ->add("cadastr_size","static", ["tag" => "div", "label" => "Кадастровая площадь"])
+            ->add("square_filled","text", [
+                'rules' => 'required',
+                "label" => "Занятая площадь"
+            ])
             ->add("cadastr_num","text", [
                 'rules' => 'required',
                 "label" => "Кадастровый номер"

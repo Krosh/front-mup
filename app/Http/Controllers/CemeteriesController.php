@@ -16,6 +16,7 @@ use Session;
 class CemeteriesController extends Controller
 {
 
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -99,6 +100,8 @@ class CemeteriesController extends Controller
         $graves = Grave::where("idCemetery",$id)
             ->paginate(25);
 
+
+
         return view('cemeteries.edit', ["cemetery" => $cemetery, "form" => $form, "graves" => $graves]);
     }
 
@@ -119,9 +122,11 @@ class CemeteriesController extends Controller
         $cemetery->update($requestData);
 
 
+
+
         Session::flash('flash_message', 'Cemetery updated!');
 
-        return redirect('cemeteries');
+        return redirect('cemeteries',301);
     }
 
     /**

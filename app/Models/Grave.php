@@ -45,6 +45,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereSquare($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereCenterLat($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereCenterLon($value)
+ * @property integer $idFromRegsystem
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereIdFromRegsystem($value)
  */
 class Grave extends Model
 {
@@ -237,6 +239,14 @@ class Grave extends Model
     {
         $this->_deads = Dead::where("idGrave",$this->id)
             ->get();
+    }
+
+    /**
+     * @return Cemetery
+     */
+    public function getCemetery()
+    {
+        return Cemetery::findOrFail($this->idCemetery);
     }
 
     //

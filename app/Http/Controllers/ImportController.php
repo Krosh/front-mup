@@ -62,7 +62,7 @@ class ImportController extends Controller
     {
 
 
-        $file = public_path().'/excel.xlsx';
+        $file =  "/home/ritualuh/public_html/excel.xlsx";
         $objPHPExcel = PHPExcel_IOFactory::createReaderForFile($file);
         $objXLS = $objPHPExcel->load($file);
         $sheet = $objXLS->getSheet(0);

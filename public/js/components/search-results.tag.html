@@ -1,0 +1,52 @@
+﻿<search-results>
+   <div class = "search-results-container" each={ item, i in items }>
+        <div class="search-results-fio">
+            { item.fio }
+        </div>
+        <div class="search-results-dates">
+            { item.dateBorn } - { item.dateDeath }
+        </div>
+        <div class="search-results-location">
+            <a href = "#" onclick="showDeadOnMap({ item.id })" >{ item.cemetery }</a> ({ item.city })
+        </div>
+        <div class="clearfix">
+        </div>
+   </div>
+
+
+    <script>
+        var tag = this;
+        var items = [];
+        loadItems(newItems) {
+            tag.items = newItems;
+            tag.update();
+        }
+
+        tag.on('mount', () => {
+            if (typeof opts.onLoad !== "undefined")
+                opts.onLoad.call(tag);
+        });
+    </script>
+    <style scoped>
+        .search-results-container {
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-results-fio {
+            text-align: center;
+            font-size: 18px;
+
+        }
+
+        .search-results-dates {
+            color: black;
+            float: left;
+        }
+
+        .search-results-location {
+            color: black;
+            float: right;
+        }
+    </style>
+</search-results>

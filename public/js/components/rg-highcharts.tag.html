@@ -1,0 +1,63 @@
+﻿<rg-highcharts>
+    <div id = "container"></div>
+    <script>
+        var tag = this;
+
+        var chart = null;
+        var chartOptions = {};
+
+        // TODO:: remove to mixin
+        getOption(name,defaultValue) {
+            return opts[name] || defaultValue;
+        }
+
+        alreadyLoadedScripts() {
+            return document.getElementById('rg-highcharts_scripts');
+        }
+
+        loadScripts() {
+            if (tag.alreadyLoadedScripts())
+                return;
+            let head = document.getElementsByTagName('head')[0]
+            let script = document.createElement('script')
+            script.setAttribute('id', 'rg-highcharts_scripts')
+            script.type = 'text/javascript'
+            script.src = 'https://code.highcharts.com/highcharts.js'
+            script.onreadystatechange = script.onload = () => {
+                tag.drawChart();
+                if (typeof tag.opts.onLoad !== "undefined")
+                    tag.opts.onLoad.call(tag);
+            }
+            document.body.appendChild(script)
+            let cssFile = document.createElement('link')
+            cssFile.rel = 'stylesheet'
+            cssFile.href = 'https://cdnjs.cloudflare.com/ajax/libs/highcharts/5.0.2/css/highcharts.css'
+            document.body.appendChild(cssFile)
+        }
+
+        drawChart() {
+            chart = Highcharts.chart(tag.container, tag.chartOptions);
+        }
+
+        changeChart(chartOptions) {
+            chart.destroy();
+            tag.chartOptions = chartOptions;
+            tag.drawChart();
+        }
+
+        tag.on('mount', () => {
+            tag.chartOptions = tag.opts.chartOptions;
+            tag.loadScripts();
+        });
+
+    </script>
+    <style scoped>
+        .container {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+    </style>
+</rg-highcharts>

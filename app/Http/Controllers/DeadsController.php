@@ -116,4 +116,42 @@ class DeadsController extends Controller
 
         return redirect('deads');
     }
+
+    public function info(Request $request)
+    {
+        $id = $request->get("id");
+        $dead = Dead::findOrFail($id);
+        return [
+            "idCemetery" => $dead->getCemetery()->id,
+            "lat" => $dead->getGrave()->latitude,
+            "lng" => $dead->getGrave()->longitude,
+        ];
+    }
+
+    public function search(Request $request)
+    {
+        $fio = $request->get("fio");
+        $arr = explode(" ",$fio);
+        $deads = Dead::where("family","LIKE", "%{$arr[0]}%");
+        if (count($arr)>1)
+            $deads = $deads->where("name","LIKE","%{$arr[1]}%");
+        if (count($arr)>2)
+            $deads = $deads->where("patron","LIKE","%{$arr[2]}%");
+        $deads = $deads->take(20)->get();
+        $result = [];
+        foreach ($deads as $item)
+        {
+            $arr = [];
+            $arr["fio"] = $item->getFio();
+            // TODO:: Заменить year на date, когда будет совершен переход на использование полных дат
+            $arr["dateBorn"] = $item->yearBorn;
+            $arr["dateDeath"] = $item->yearDeath;
+            $arr["cemetery"] = $item->getCemetery()->name;
+            $arr["city"] = $item->getCemetery()->getCity()->name;
+            $arr["id"] = $item->id;
+            $result[] = $arr;
+        }
+        return $result;
+
+    }
 }

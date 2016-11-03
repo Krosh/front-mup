@@ -11,6 +11,12 @@ use App\Http\Requests;
 class CemeteryController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+
     public function loadCoordsFromSite($id)
     {
         $cemetery = Cemetery::findOrFail($id);

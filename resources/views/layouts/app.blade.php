@@ -63,6 +63,7 @@
                                 <li><a href="{{ url('/cemeteries') }}">Кладбища</a></li>
                             </ul>
                         </li>
+                        <li><a href="{{ url('/map') }}">Карта</a></li>
                         @endif
                     </ul>
 
