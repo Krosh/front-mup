@@ -87,9 +87,11 @@
     </div>
     <div class="sidebar left sidebar-card card_cont">
         <div class="card">
+            <div class="card_title-wrap">
             <div class="card_title">
                 <h3 class="js-name">123</h3>
                 <div class="popup_close btnCardClose">×</div>
+            </div>
             </div>
             <div class="card_content">
                 <table>
@@ -162,11 +164,13 @@
     </div>
     <div class="sidebar left sidebar-search-card card_cont">
         <div class="card">
+            <div class="card_title-wrap card-wrap-find">
             <div class="card_title">
                 <h3 class="card_title-text">Результаты поиска</h3>
                 <div class="popup_close btnSearchCardClose">×</div>
             </div>
-            <div class="card_content">
+                </div>
+            <div class="card_content card_content-find">
                 <search-results>
 
                 </search-results>
@@ -349,6 +353,23 @@
     }
 
 
+</script>
+<script>
+    (function($){
+        $(window).on("load",function(){
+            $(".card_cont").mCustomScrollbar({
+                theme:"dark-3",
+                scrollButtons:{ enable: true }
+            });
+        });
+    })(jQuery);
+</script>
+
+<script>
+    $(document).ready(function () {
+    var widthTitle = $(".card_content").width();
+
+    })
 </script>
 </body>
 </html>
