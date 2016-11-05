@@ -41,15 +41,18 @@
                 <div class="b-find__btn-menu">
                     <div class="btn-menu__pic">
                         <a href="#" id="btnMenu">
+                           <div> </div>
+                           <div> </div>
+                           <div> </div>
                         </a>
                     </div>
                 </div>
                 <div class="b-find__field-find">
-                    <input type="text" id="js-search-fio">
-                    <a href = "#" class="js-search">Искать</a>
+                    <input type="text" id="js-search-fio" placeholder="Поиск по ФИО">
+                    <a href = "#" class="js-search"><i class="fa fa-search" aria-hidden="true"></i></a>
                 </div>
-                <div style="padding: 15px;background-color: white;display: inline-block;margin-top: 5px">
-                    <a href="#" class="js-toggle-search-options">Доп. настройки поиска</a>
+                <div>
+                    <a href="#" class="js-toggle-search-options"> Параметры поиска <i class="fa fa-cog" aria-hidden="true"></i> </a>
                 </div>
             </div>
             <div class="b-find__row js-search-options" style="display: none">
@@ -90,7 +93,7 @@
             <div class="card_title-wrap">
             <div class="card_title">
                 <h3 class="js-name">123</h3>
-                <div class="popup_close btnCardClose">×</div>
+                <div class="popup_close btnCardClose"><i class="fa fa-times-circle" aria-hidden="true"></i></div>
             </div>
             </div>
             <div class="card_content">
@@ -167,7 +170,7 @@
             <div class="card_title-wrap card-wrap-find">
             <div class="card_title">
                 <h3 class="card_title-text">Результаты поиска</h3>
-                <div class="popup_close btnSearchCardClose">×</div>
+                <div class="popup_close btnSearchCardClose"><i class="fa fa-times-circle" aria-hidden="true"></i></div>
             </div>
                 </div>
             <div class="card_content card_content-find">
@@ -353,23 +356,6 @@
     }
 
 
-</script>
-<script>
-    (function($){
-        $(window).on("load",function(){
-            $(".card_cont").mCustomScrollbar({
-                theme:"dark-3",
-                scrollButtons:{ enable: true }
-            });
-        });
-    })(jQuery);
-</script>
-
-<script>
-    $(document).ready(function () {
-    var widthTitle = $(".card_content").width();
-
-    })
 </script>
 </body>
 </html>

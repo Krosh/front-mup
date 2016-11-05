@@ -23,6 +23,7 @@ elixir(function (mix) {
         'jquery.popup.js',
         'progressbar.js',
         'jquery.mCustomScrollbar.js',
-        'aja.min.js'
+        'aja.min.js',
+        'script.js'
     ]);
 });

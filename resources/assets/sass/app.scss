@@ -45,14 +45,14 @@
   margin: 20px;
   background: white;
   color: black !important;
-
+  border: 1px solid rgba(211, 211, 211, 0.5);
+  border-radius: 3px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22) !important;
   h3 {
     text-align: center;
     font-size: 20px;
   }
 }
-
-
 
 .sidebar-menu {
   width: 340px;
@@ -72,13 +72,13 @@
 
 .b-find {
   position: fixed;
+  padding: 5px 10px;
   z-index: 1;
   margin: 10px;
   background-color: white;
   border-radius: 2px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 -1px 0px rgba(0, 0, 0, 0.02);
   text-align: right;
-  padding: 10px;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
@@ -94,6 +94,7 @@
 .b-find__btn-menu {
 
 }
+
 .btn-menu__pic {
   background-image: url("../images/menu.png");
   background-size: contain;
@@ -103,37 +104,105 @@
   height: 40px;
   margin: 0 auto;
 }
+
 .modal-content {
   width: 800px;
   height: 600px;
   margin: 0 auto;
 }
-.leaflet-pane
-{
+
+.leaflet-pane {
   z-index: 0 !important;
 }
+
 .card__icon-column {
   text-align: center;
   padding: 5px 15px;
 }
-.card__icon-img
-{
+
+.card__icon-img {
   width: 35px;
 }
+
 .card_title-wrap {
   width: 385px;
   position: fixed;
   background-color: white;
   z-index: 1;
   height: 80px;
+  word-wrap: break-word;
 }
+
 .card_content {
   position: relative;
   top: 80px;
 }
+
 .card-wrap-find {
   height: 50px;
 }
+
 .card_content-find {
   top: 55px;
+}
+
+#btnMenu {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+#btnMenu div {
+  height: 3px;
+  width: 50%;
+  margin-bottom: 5px;
+  background-color: #333;
+}
+
+#js-search-fio {
+  border: none;
+  width: 150px;
+  border-bottom: 1px solid black;
+}
+
+.js-search {
+  text-decoration: none !important;
+  color: black !important;
+}
+
+.js-toggle-search-options {
+  margin-left: 10px;
+}
+
+.js-toggle-search-options {
+  color: black;
+  text-decoration: none !important;
+}
+.js-toggle-search-options:hover {
+  color: #333;
+}
+.js-toggle-search-options i {
+  margin-left: 3px;
+}
+.search-results-container {
+  border-bottom: 1px solid lightgrey;
+  margin: 0 !important;
+  padding-bottom: 25px !important;
+  padding-top: 25px !important;
+}
+.search-results-container:nth-child(2n) {
+  background-color: #fafafa;
+}
+
+.search-results-container:nth-child(2n+1) {
+  background-color: white;
+}
+.clearfix {
+  clear: both;
+}
+.search-results-fio {
+  margin-bottom: 10px;
 }
