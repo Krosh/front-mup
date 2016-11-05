@@ -126,16 +126,21 @@
 
 .card_title-wrap {
   width: 385px;
-  position: fixed;
   background-color: white;
   z-index: 1;
   height: 80px;
   word-wrap: break-word;
 }
-
+.card_title {
+  height: 80px;
+  width: 385px;
+  background-color: white;
+  position: fixed;
+}
+.card_title-find {
+  height: 50px;
+}
 .card_content {
-  position: relative;
-  top: 80px;
 }
 
 .card-wrap-find {
@@ -143,7 +148,6 @@
 }
 
 .card_content-find {
-  top: 55px;
 }
 
 #btnMenu {

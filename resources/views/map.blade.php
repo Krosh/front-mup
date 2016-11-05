@@ -168,7 +168,7 @@
     <div class="sidebar left sidebar-search-card card_cont">
         <div class="card">
             <div class="card_title-wrap card-wrap-find">
-            <div class="card_title">
+            <div class="card_title card_title-find">
                 <h3 class="card_title-text">Результаты поиска</h3>
                 <div class="popup_close btnSearchCardClose"><i class="fa fa-times-circle" aria-hidden="true"></i></div>
             </div>
