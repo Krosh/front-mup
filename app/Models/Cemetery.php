@@ -142,6 +142,24 @@ class Cemetery extends Model
         return 100;
     }
 
+    public function getGraves()
+    {
+        return Grave::where("idCemetery",$this->id)
+            ->get();
+    }
+
+    public function getHeatmap()
+    {
+        $graves = $this->getGraves();
+        $result = [];
+        foreach ($graves as $grave)
+        {
+            $arr = [floatval($grave->latitude),floatval($grave->longitude),1];
+            $result[] = $arr;
+        }
+        return ["points" => $result, "radius" => 15];
+    }
+
     public function getAsGeoJson()
     {
         $result = [];

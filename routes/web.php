@@ -35,6 +35,7 @@ Route::get("/map","CemeteryController@map");
 
 Route::resource('cities', 'CitiesController');
 
+Route::get("/cemeteries/info", "CemeteriesController@info");
 Route::get("/cemeteries/geojson", "CemeteriesController@geojson");
 Route::resource('cemeteries', 'CemeteriesController');
 Route::post("/cemeteries/{id}/cadastr", "CemeteriesController@cadastr");

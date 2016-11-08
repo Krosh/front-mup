@@ -40,11 +40,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereCadastrSize($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereCadastrAdres($value)
  * @property integer $square
- * @property float $center_lat
- * @property float $center_lon
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereSquare($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereCenterLat($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereCenterLon($value)
  * @property integer $idFromRegsystem
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereIdFromRegsystem($value)
  */
@@ -248,6 +244,13 @@ class Grave extends Model
     {
         return Cemetery::findOrFail($this->idCemetery);
     }
+
+    public function cemetery()
+    {
+        return $this->belongsTo('\App\Models\Cemetery',"idCemetery");
+    }
+
+
 
     //
 }

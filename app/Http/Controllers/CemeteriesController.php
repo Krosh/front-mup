@@ -100,8 +100,6 @@ class CemeteriesController extends Controller
         $graves = Grave::where("idCemetery",$id)
             ->paginate(25);
 
-
-
         return view('cemeteries.edit', ["cemetery" => $cemetery, "form" => $form, "graves" => $graves]);
     }
 
@@ -156,6 +154,21 @@ class CemeteriesController extends Controller
         }
         return $result;
     }
+
+    public function info()
+    {
+        $result = [];
+        $cemeteries = Cemetery::all();
+        foreach ($cemeteries as $cemetery)
+        {
+            $array = ["id" => $cemetery->id];
+            $array["heatmap"] = $cemetery->getHeatmap();
+            $array["geo"] = $cemetery->getAsGeoJson();
+            $result[] = $array;
+        }
+        return $result;
+    }
+
 
 
     /**

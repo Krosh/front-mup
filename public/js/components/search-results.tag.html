@@ -1,16 +1,6 @@
 ﻿<search-results>
    <div class = "search-results-container" each={ item, i in items }>
-        <div class="search-results-fio">
-            { item.fio }
-        </div>
-        <div class="search-results-dates">
-            { item.dateBorn } - { item.dateDeath }
-        </div>
-        <div class="search-results-location">
-            <a href = "#" onclick="showDeadOnMap({ item.id })" >{ item.cemetery }</a> ({ item.city })
-        </div>
-        <div class="clearfix">
-        </div>
+        <search-one-result data={ item }></search-one-result>
    </div>
 
 

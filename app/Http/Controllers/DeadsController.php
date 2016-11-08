@@ -137,19 +137,14 @@ class DeadsController extends Controller
             $deads = $deads->where("name","LIKE","%{$arr[1]}%");
         if (count($arr)>2)
             $deads = $deads->where("patron","LIKE","%{$arr[2]}%");
+        $deads = $deads->where("family", "<>", "")
+            ->where("name", "<>", "")
+            ->where("patron", "<>", "");
         $deads = $deads->take(20)->get();
         $result = [];
         foreach ($deads as $item)
         {
-            $arr = [];
-            $arr["fio"] = $item->getFio();
-            // TODO:: Заменить year на date, когда будет совершен переход на использование полных дат
-            $arr["dateBorn"] = $item->yearBorn;
-            $arr["dateDeath"] = $item->yearDeath;
-            $arr["cemetery"] = $item->getCemetery()->name;
-            $arr["city"] = $item->getCemetery()->getCity()->name;
-            $arr["id"] = $item->id;
-            $result[] = $arr;
+            $result[] = $item->getSearchInfo();
         }
         return $result;
 

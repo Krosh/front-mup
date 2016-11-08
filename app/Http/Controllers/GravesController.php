@@ -58,7 +58,8 @@ class GravesController extends Controller
         return view('graves.create', ["form" => $form]);
     }
 
-    /**
+
+   /**
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request

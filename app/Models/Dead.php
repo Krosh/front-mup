@@ -70,6 +70,17 @@ class Dead extends Model
         $this->sizeMemorial = $item->sizeMemorial;
     }
 
+
+    public function grave()
+    {
+        return $this->belongsTo('App\Models\Grave',"idGrave","id");
+    }
+
+    public function cemetery()
+    {
+        return $this->grave->cemetery;
+    }
+
     /**
      * @return Grave
      */
@@ -111,4 +122,34 @@ class Dead extends Model
         if (count($elements)>2)
             $this->patron = $elements[2];
     }
+
+
+    public function getDescription()
+    {
+        $result = "";
+        $grave = $this->grave;
+        return $grave->id;
+        return "adsa";
+    }
+
+    public function getImagePath()
+    {
+        return "http://placehold.it/350x150";
+    }
+
+    public function getSearchInfo()
+    {
+        $arr = [];
+        $arr["fio"] = $this->getFio();
+        // TODO:: Заменить year на date, когда будет совершен переход на использование полных дат
+        $arr["dateBorn"] = $this->yearBorn;
+        $arr["dateDeath"] = $this->yearDeath;
+        $arr["cemetery"] = $this->getCemetery()->name;
+        $arr["city"] = $this->getCemetery()->getCity()->name;
+        $arr["id"] = $this->id;
+        $arr["description"] = $this->getDescription();
+        $arr["image"] = $this->getImagePath();
+        return $arr;
+    }
+
 }

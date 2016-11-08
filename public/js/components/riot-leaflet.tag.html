@@ -24,12 +24,20 @@
             script.type = 'text/javascript'
             script.src = 'https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js'
             script.onreadystatechange = script.onload = () => {
+                // loading heatmap script
+                let heatMapScript = document.createElement('script')
+                heatMapScript.type = 'text/javascript'
+                heatMapScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js'
+                document.body.appendChild(heatMapScript)
+
+
                 // loading dvf scripts and css files
                 let script = document.createElement('script')
                 script.type = 'text/javascript'
                 script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet-dvf/0.3.0/leaflet-dvf.js'
                 script.onreadystatechange = script.onload = tag.mountMap
                 document.body.appendChild(script)
+
 
                 let cssFile = document.createElement('link')
                 cssFile.rel = 'stylesheet'
@@ -108,8 +116,10 @@
          mountMap() {
             let centerPos = tag.getOption("centerPos",[53.315408, 83.822352]);
             let zoom = tag.getOption("zoom",12);
+            let maxZoom = tag.getOption("maxZoom",20);
             tag.zoom = zoom;
             tag.map = L.map(tag.root.querySelector(".map")).setView(centerPos, zoom);
+            tag.map.options.maxZoom = maxZoom;
             let layers = tag.getOption("layers",tag.getDefaultLayers());
             tag.loadMapLayers(layers);
             if (typeof opts.onMountMap !== "undefined")

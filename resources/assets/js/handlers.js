@@ -3,6 +3,7 @@ $(document).ready(
         $(".sidebar.left.sidebar-menu").sidebar();
         $(".sidebar.left.sidebar-card").sidebar();
         $(".sidebar.left.sidebar-search-card").sidebar();
+        $(".default_popup").popup();
         $("#btnMenu").click(
             function () {
                 $(".b-shadow").show();

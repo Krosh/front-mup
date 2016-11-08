@@ -25,9 +25,9 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <script src="{{URL::asset('js/components/riot-leaflet.tag.html')}}" type="riot/tag"></script>
     <script src="{{URL::asset('js/components/rg-highcharts.tag.html')}}" type="riot/tag"></script>
+    <script src="{{URL::asset('js/components/search-one-result.tag.html')}}" type="riot/tag"></script>
     <script src="{{URL::asset('js/components/search-results.tag.html')}}" type="riot/tag"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/riot/2.6.2/riot+compiler.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/chart.js/1.0.2/Chart.min.js"></script>
 
 
 </head>
@@ -48,8 +48,10 @@
                     </div>
                 </div>
                 <div class="b-find__field-find">
-                    <input type="text" id="js-search-fio" placeholder="Поиск по ФИО">
-                    <a href = "#" class="js-search"><i class="fa fa-search" aria-hidden="true"></i></a>
+                    <form action="#" class="js-search-form">
+                        <input type="text" id="js-search-fio" placeholder="Поиск по ФИО">
+                        <a href = "#" class="js-search"><i class="fa fa-search" aria-hidden="true"></i></a>
+                    </form>
                 </div>
                 <div>
                     <a href="#" class="js-toggle-search-options"> Параметры поиска <i class="fa fa-cog" aria-hidden="true"></i> </a>
@@ -93,7 +95,7 @@
             <div class="card_title-wrap">
             <div class="card_title">
                 <h3 class="js-name">123</h3>
-                <div class="popup_close btnCardClose"><i class="fa fa-times-circle" aria-hidden="true"></i></div>
+                <div class="popup_close btnCardClose"><i class="fa fa-times" aria-hidden="true"></i></div>
             </div>
             </div>
             <div class="card_content">
@@ -170,7 +172,7 @@
             <div class="card_title-wrap card-wrap-find">
             <div class="card_title card_title-find">
                 <h3 class="card_title-text">Результаты поиска</h3>
-                <div class="popup_close btnSearchCardClose"><i class="fa fa-times-circle" aria-hidden="true"></i></div>
+                <div class="popup_close btnSearchCardClose"><i class="fa fa-times" aria-hidden="true"></i></div>
             </div>
                 </div>
             <div class="card_content card_content-find">
@@ -181,26 +183,35 @@
         </div>
     </div>
 </div>
-<div id="modal" style="display:none;">
+<div id="dead-modal" class="popup" style="display:none;">
     <div class="modal-content">
         <p>123</p>
     </div>
 
 </div>
 
+<!--<a href="#dead-modal" class="default_popup" style="visibility: hidden">Default Inline</a>
+-->
 
 <script>
     var map;
     var cemeteries = [];
+    var heatmaps = [];
     var pieCharts;
     var maxValue = 100;
     var tempMarker = null;
+    var defaultMapConfig = {
+        zoom: 10,
+        centerPos: [53.315408, 83.822352],
+    }
+
 
     function addMarker(lat,lng)
     {
         if (tempMarker != null)
             removeMarker();
         tempMarker = L.marker([lat, lng]).addTo(map.map);
+        tempMarker.on("click",showSearchContainer);
     }
 
     function removeMarker()
@@ -213,20 +224,21 @@
 
 
     riot.mount("riot-leaflet",{
-        zoom: 10,
-        centerPos: [53.315408, 83.822352],
+        zoom: defaultMapConfig.zoom,
+        centerPos: defaultMapConfig.centerPos,
         onMountMap: function() {
             map = this;
             map.map.zoomControl.setPosition('topright');
             aja()
-                .url('<?=url("/cemeteries/geojson"); ?>')
+                .url('<?=url("/cemeteries/info"); ?>')
                 .on('success', (data) => {
-                pieCharts = map.addChartLayer("pie-charts");
-                data.forEach((elem) => {
-                       addCemeteryPolygon(elem);
-                       addChart(elem);
-                    });
-               initMapContainer();
+                    pieCharts = map.addChartLayer("pie-charts");
+                    data.forEach((elem) => {
+                           addCemeteryPolygon(elem.geo,elem.id);
+                           addChart(elem.geo);
+                           addHeatmap(elem.heatmap,elem.id);
+                        });
+                    initMapContainer();
                 })
             .go();
             }
@@ -245,14 +257,19 @@
         chartOptions: {}
     });
 
-    var addCemeteryPolygon = (elem) => {
-        let layer = map.addGeoJsonLayer("cemetery"+elem.features[0].properties.id,elem);
+    var addCemeteryPolygon = (elem, index) => {
+        let layer = map.addGeoJsonLayer("cemetery"+index,elem);
         layer.bringToBack();
         layer.on("click",(e) => {
             showPanel(elem.features[0].properties);
         });
         map.map.removeLayer(layer);
-        cemeteries[elem.features[0].properties.id] = layer;
+        cemeteries[index] = layer;
+    }
+
+    var addHeatmap = (elem, index) => {
+        let heat = L.heatLayer(elem.points, {radius: elem.radius});
+        heatmaps[index] = heat;
     }
 
     var formatCemeterySize = (text) => {
@@ -291,8 +308,8 @@
     // Init jquery events
     $(document).ready(function ()
     {
-        $('.default_popup').popup();
         $(".js-search").click(search);
+        $(".js-search-form").submit(search);
     });
 
     function search()
@@ -304,15 +321,50 @@
                 showSearchResults(data)
             })
             .go();
+        return false;
+    }
+
+
+    function showHeatMap(idCemetery)
+    {
+        showCemeteryPolygon(idCemetery);
+        heatmaps[idCemetery].addTo(map.map);
+    }
+
+
+    function showSearchContainer()
+    {
+        $(".sidebar.left.sidebar-menu").trigger("sidebar:close");
+        $(".sidebar.left.sidebar-card").fadeOut();
+        $(".sidebar.left.sidebar-search-card").fadeIn();
     }
 
 
     function showSearchResults(data)
     {
-        $(".sidebar.left.sidebar-menu").trigger("sidebar:close");
-        $(".sidebar.left.sidebar-card").fadeOut();
-        $(".sidebar.left.sidebar-search-card").fadeIn();
+        showSearchContainer();
         searchResults.loadItems(data);
+    }
+
+    function showDefaultMap(){
+        hideCemeteriesPolygons()
+        removeMarker();
+        map.map.addLayer(pieCharts);
+        map.map.setView(defaultMapConfig.centerPos,defaultMapConfig.zoom);
+    }
+
+    function showCemeteryPolygon(idCemetery)
+    {
+        let cemeteryLayer = cemeteries[idCemetery];
+        map.map.addLayer(cemeteryLayer);
+        map.map.fitBounds(cemeteryLayer.getBounds(), {animate: true});
+    }
+
+    function hideCemeteriesPolygons()
+    {
+        cemeteries.forEach((elem) => {
+            map.map.removeLayer(elem);
+        });
     }
 
     function showDeadOnMap(idDead)
@@ -321,12 +373,22 @@
             .url('<?=url("/deads/info"); ?>')
             .data({id: idDead})
             .on('success', function(data) {
-                console.log(data);
-                var cemeteryLayer = cemeteries[data.idCemetery];
-                map.map.addLayer(cemeteryLayer);
+                showCemeteryPolygon(data.idCemetery);
                 addMarker(data.lat,data.lng);
-                map.map.fitBounds(cemeteryLayer.getBounds());
                 map.map.removeLayer(pieCharts);
+            })
+            .go();
+    }
+
+
+    function showDeadCard(idDead)
+    {
+        aja()
+            .url('<?=url("/deads/info"); ?>')
+            .data({id: idDead})
+            .on('success', function(data) {
+                // Костыль
+                $(".default_popup").click();
             })
             .go();
     }
