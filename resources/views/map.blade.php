@@ -100,6 +100,11 @@
                 <div class="popup_close btnCardClose"><i class="fa fa-times" aria-hidden="true"></i></div>
             </div>
             </div>
+            <div class="b-card-button">
+                <button class="btn-card btn-card-active">1 кнопка</button>
+                <button class="btn-card">2 кнопка</button>
+                <button class="btn-card">3 кнопка</button>
+            </div>
             <div class="card_content">
                 <table>
                     <tr>
@@ -422,6 +427,14 @@
     }
 
 
+</script>
+<script>
+    $(document).ready(function () {
+        $(".btn-card").on("click",function () {
+            $(".btn-card").removeClass('btn-card-active');
+            $(this).toggleClass('btn-card-active');
+        })
+    })
 </script>
 </body>
 </html>
