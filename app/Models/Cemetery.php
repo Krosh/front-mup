@@ -14,38 +14,42 @@ use Illuminate\Support\Facades\DB;
  * @property \Carbon\Carbon $updated_at
  * @property string $name
  * @property string $cadastr_num
+ * @property integer $idCity
  * @property integer $cadastr_size
  * @property string $cadastr_adres
- * @property integer $idCity
  * @property float $center_lat
  * @property float $center_lon
+ * @property string $watcher_name
+ * @property string $watcher_phone
+ * @property string $organisation_name
+ * @property integer $idFromRegion22
+ * @property integer $idParentCemetery
+ * @property boolean $hasTestData
+ * @property integer $test_square
+ * @property integer $test_graveCount
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereCreatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereName($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereCadastrNum($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereIdCity($value)
- * @mixin \Eloquent
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereCadastrSize($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereCadastrAdres($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereCenterLat($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereCenterLon($value)
- * @property integer $square_filled
- * @property string $watcher_name
- * @property string $watcher_phone
- * @property string $organisation_name
- * @property integer $graveCount
- * @property integer $idFromRegion22
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereSquareFilled($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereWatcherName($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereWatcherPhone($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereOrganisationName($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereGraveCount($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereIdFromRegion22($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereIdParentCemetery($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereHasTestData($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereTestSquare($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereTestGraveCount($value)
+ * @mixin \Eloquent
  */
 class Cemetery extends Model
 {
-    protected $fillable = ['name','cadastr_num','idCity', 'square_filled', 'watcher_phone', 'watcher_name', 'organisation_name'];
+    protected $fillable = ['name','cadastr_num','idCity', 'watcher_phone', 'watcher_name', 'organisation_name', 'idParentCemetery', 'hasTestData', 'test_square', 'test_graveCount'];
 
 
     public $_coords = null;
@@ -162,15 +166,35 @@ class Cemetery extends Model
 
     public function getFilledSize()
     {
-        return $this->square_filled;
+        $MM_TO_METERS_COEF = 1000*1000;
+        if ($this->hasTestData)
+        {
+            return $this->test_square;
+        } else
+        {
+            $sum = DB::table("graves")
+                ->where("idCemetery","=",$this->id)
+                ->sum("square") / $MM_TO_METERS_COEF;
+            $sum += DB::table("graves")
+                ->join("cemeteries","graves.idCemetery","=","cemeteries.id")
+                ->where("idParentCemetery","=",$this->id)
+                ->sum("square")/ $MM_TO_METERS_COEF;
+            return $sum;
+        }
     }
 
     public function getGraveCount()
     {
-        return DB::table("deads")
-            ->join("graves","deads.idGrave","=","graves.id")
-            ->where("idCemetery","=",$this->id)
-            ->count();
+        if ($this->hasTestData)
+        {
+            return $this->test_graveCount;
+        } else
+        {
+            return DB::table("deads")
+                ->join("graves","deads.idGrave","=","graves.id")
+                ->where("idCemetery","=",$this->id)
+                ->count();
+        }
     }
 
     public function getGraves()
@@ -191,6 +215,12 @@ class Cemetery extends Model
         return ["points" => $result, "radius" => 15];
     }
 
+    public function getChildCemeteries()
+    {
+        return Cemetery::where("idParentCemetery",$this->id)
+            ->get();
+    }
+
     public function getAsGeoJson()
     {
         $result = [];
@@ -200,7 +230,7 @@ class Cemetery extends Model
         $cemeteryFeature = [];
         $cemeteryFeature["type"] = "Feature";
         $cemeteryFeature["geometry"] = [];
-        $cemeteryFeature["geometry"]["type"] = "Polygon";
+        $cemeteryFeature["geometry"]["type"] = "MultiPolygon";
         $cemeteryFeature["geometry"]["coordinates"] = [];
         $cemeteryFeature["geometry"]["coordinates"][0] = [];
         $cemeteryFeature["properties"]["id"] = $this->id;
@@ -222,7 +252,17 @@ class Cemetery extends Model
         foreach ($this->getCoords() as $point)
         {
             $coords = [$point->longitude*1,$point->latitude*1];
-            $cemeteryFeature["geometry"]["coordinates"][0][] = $coords;
+            $cemeteryFeature["geometry"]["coordinates"][0][0][] = $coords;
+        }
+        $numCemetery = 1;
+        foreach ($this->getChildCemeteries() as $childCemetery)
+        {
+            foreach ($childCemetery->getCoords() as $point)
+            {
+                $coords = [$point->longitude*1,$point->latitude*1];
+                $cemeteryFeature["geometry"]["coordinates"][$numCemetery][0][] = $coords;
+            }
+            $numCemetery++;
         }
 //        $cemeteryFeature["geometry"]["coordinates"][0][] = $cemeteryFeature["geometry"]["coordinates"][0][0];
          $result["features"][] = $cemeteryFeature;

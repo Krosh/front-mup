@@ -98,12 +98,13 @@
             <div class="card_title">
                 <h3 class="js-name">123</h3>
                 <div class="popup_close btnCardClose"><i class="fa fa-times" aria-hidden="true"></i></div>
+                <div class="b-card-button">
+                    <button class="btn-card js-btn-chart btn-card-active">Диаграмма</button>
+                    <button class="btn-card js-btn-heatmap">Тепловая карта</button>
+                    <!--      <button class="btn-card">3 кнопка</button>
+                    -->
+                </div>
             </div>
-            </div>
-            <div class="b-card-button">
-                <button class="btn-card btn-card-active">1 кнопка</button>
-                <button class="btn-card">2 кнопка</button>
-                <button class="btn-card">3 кнопка</button>
             </div>
             <div class="card_content">
                 <table>
@@ -206,6 +207,9 @@
     var map;
     var cemeteries = [];
     var heatmaps = [];
+    var modes = [];
+    var MODE_CHART = 1;
+    var MODE_HEATMAP = 2;
     var pieCharts;
     var maxValue = 100;
     var tempMarker = null;
@@ -243,11 +247,21 @@
                 .on('success', (data) => {
                     pieCharts = map.addChartLayer("pie-charts");
                     data.forEach((elem) => {
-                           addCemeteryPolygon(elem.geo,elem.id);
-                           addChart(elem.geo);
-                           addHeatmap(elem.heatmap,elem.id);
+                            modes[elem.id] = MODE_CHART;
+                            addCemeteryPolygon(elem.geo,elem.id);
+                            addChart(elem.geo);
+                            addHeatmap(elem.heatmap,elem.id);
                         });
                     initMapContainer();
+                    map.map.on("zoomend", function(e){
+                        let zoomValue = map.map.getZoom();
+                        let newRadius = zoomValue < 12 ? Math.max(40 / Math.pow(2, 12 - zoomValue),4): 40;
+                        pieCharts.eachLayer(function(figure)
+                        {
+                            figure.options.radiusX = figure.options.radiusY = figure.options.radius = newRadius;
+                            figure.redraw();
+                        });
+                    });
                 })
             .go();
             }
@@ -340,6 +354,11 @@
         heatmaps[idCemetery].addTo(map.map);
     }
 
+    function hideHeatMap(idCemetery)
+    {
+        hideCemeteryPolygon(idCemetery);
+        map.map.removeLayer(heatmaps[idCemetery]);
+    }
 
     function showSearchContainer()
     {
@@ -368,6 +387,12 @@
         map.map.addLayer(cemeteryLayer);
         map.map.fitBounds(cemeteryLayer.getBounds(), {animate: true});
     }
+
+    function hideCemeteryPolygon(idCemetery)
+    {
+        map.map.removeLayer(cemeteries[idCemetery]);
+    }
+
 
     function hideCemeteriesPolygons()
     {
@@ -402,6 +427,25 @@
             .go();
     }
 
+    function clickHeatMapButton(id)
+    {
+        $(".btn-card-active").removeClass("btn-card-active");
+        modes[id] = MODE_HEATMAP;
+        showHeatMap(id);
+        map.map.removeLayer(pieCharts);
+        $(".js-btn-heatmap").addClass("btn-card-active");
+    }
+
+    function clickChartButton(id)
+    {
+        $(".btn-card-active").removeClass("btn-card-active");
+        modes[id] = MODE_CHART;
+        hideHeatMap(id);
+        map.map.addLayer(pieCharts);
+        $(".js-btn-chart").addClass("btn-card-active");
+    }
+
+
     function showPanel(params)
     {
         $(".sidebar.left.sidebar-menu").trigger("sidebar:close");
@@ -415,6 +459,15 @@
         $(".card .js-organisation-name").text(params.organisation_name);
         $(".card .js-square-info").html(params.square_info);
         $(".card .js-graves-count").text(params.graves_count);
+        $(".js-btn-heatmap").off("click").click(() => {clickHeatMapButton(params.id)});
+        $(".js-btn-chart").off("click").click(() => {clickChartButton(params.id)});
+        if (modes[params.id] == MODE_CHART)
+        {
+            clickChartButton(params.id);
+        } else if (modes[params.id] == MODE_HEATMAP)
+        {
+            clickHeatMapButton(params.id);
+        }
         chart.changeChart(JSON.parse(params.graves_dynamic));
     }
 

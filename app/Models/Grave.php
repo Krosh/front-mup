@@ -18,9 +18,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property boolean $ww2
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property string $numGrave
  * @property float $latitude
  * @property float $longitude
+ * @property integer $square
+ * @property float $center_lat
+ * @property float $center_lon
+ * @property integer $idFromRegsystem
+ * @property-read \App\Models\Cemetery $cemetery
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereIdCemetery($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereNumDeads($value)
@@ -31,18 +35,13 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereWw2($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereCreatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereNumGrave($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereLatitude($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereLongitude($value)
- * @mixin \Eloquent
- * @property integer $cadastr_size
- * @property string $cadastr_adres
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereCadastrSize($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereCadastrAdres($value)
- * @property integer $square
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereSquare($value)
- * @property integer $idFromRegsystem
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereCenterLat($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereCenterLon($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Grave whereIdFromRegsystem($value)
+ * @mixin \Eloquent
  */
 class Grave extends Model
 {
@@ -161,13 +160,18 @@ class Grave extends Model
         return true;
     }
 
+    /**
+     * Считает площадь захоронения
+     * Хранит значение площади в мм2
+     * @param $size строка из двух значений с разделителем, значения в мм
+     */
     public function setSizeGrave($size)
     {
         $this->sizeGrave = $size;
         $size = mb_strtolower(trim($size));
         $arr = explode("x",$size);
         if (count($arr) == 1)
-            $arr = explode("х",$size);
+            $arr = explode("х",$size);// Русский и английский x
         if (count($arr) == 1)
             $arr = explode("*",$size);
         if (count($arr) == 1)

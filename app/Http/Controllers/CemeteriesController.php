@@ -60,6 +60,11 @@ class CemeteriesController extends Controller
 
         $requestData = $request->all();
 
+        if ($requestData["idParentCemetery"] == "")
+            unset($requestData["idParentCemetery"]);
+        if (!isset($requestData["hasTestData"]))
+            $requestData["hasTestData"] = 0;
+
         Cemetery::create($requestData);
 
         Session::flash('flash_message', 'Cemetery added!');
@@ -117,6 +122,10 @@ class CemeteriesController extends Controller
         $requestData = $request->all();
 
         $cemetery = Cemetery::findOrFail($id);
+        if ($requestData["idParentCemetery"] == "")
+            unset($requestData["idParentCemetery"]);
+        if (!isset($requestData["hasTestData"]))
+            $requestData["hasTestData"] = 0;
         $cemetery->update($requestData);
 
 
@@ -158,7 +167,8 @@ class CemeteriesController extends Controller
     public function info()
     {
         $result = [];
-        $cemeteries = Cemetery::all();
+        $cemeteries = Cemetery::whereNull("idParentCemetery")
+            ->get();
         foreach ($cemeteries as $cemetery)
         {
             $array = ["id" => $cemetery->id];

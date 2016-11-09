@@ -36,6 +36,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $dateDeath
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereDateBorn($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Dead whereDateDeath($value)
+ * @property-read \App\Models\Grave $grave
  */
 class Dead extends Model
 {
