@@ -124,7 +124,11 @@ class Cemetery extends Model
         $result = parent::save($options);
 
         if ($new)
-            if (!$this->loadCoords());
+        {
+            if ($this->loadCoords())
+                $result = parent::save($options);
+        }
+        return $result;
 
     }
 
