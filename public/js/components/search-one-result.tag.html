@@ -1,0 +1,87 @@
+﻿<search-one-result>
+    <div class="search-results-fio">
+        { opts.data.fio }
+    </div>
+    <div if = {isShowedFullInfo} class="search-results-full_info" style="display: none">
+        <div class="search-results-image">
+            <img src="{ opts.data.image }">
+        </div>
+        <div class="search-results-description">
+            { opts.data.description }
+        </div>
+        <div class="search-results-location">
+            { opts.data.city }, { opts.data.cemetery }
+        </div>
+        <a href = "#" onclick="showDeadOnMap({opts.data.id}); return false">Показать на карте</a>
+        <div class="clearfix">
+        </div>
+    </div>
+
+    <div class="search-results-dates">
+        { opts.data.dateBorn } - { opts.data.dateDeath }
+    </div>
+    <div class="search-results-location">
+        <a href = "#" onclick="{toggleFullInfo}" >{ !isShowedFullInfo ? "подробная информация" : "скрыть подробную информацию" }</a>
+    </div>
+    <div class="clearfix">
+    </div>
+
+    <script>
+        var tag = this;
+        tag.isShowedFullInfo = false;
+        tag.needAnimateSlideDown = false;
+
+        toggleFullInfo() {
+            if (tag.isShowedFullInfo)
+            {
+                $('.search-results-full_info',tag.root).slideUp(400,() => {
+                    tag.isShowedFullInfo = !tag.isShowedFullInfo;
+                    tag.update();
+                });
+            } else
+            {
+                tag.isShowedFullInfo = !tag.isShowedFullInfo;
+                tag.needAnimateSlideDown = true;
+            }
+        }
+
+        tag.on("updated", () => {
+            if (tag.needAnimateSlideDown)
+            {
+                $('.search-results-full_info',tag.root).slideDown();
+                tag.needAnimateSlideDown = false;
+            }
+        })
+
+
+    </script>
+
+    <style scoped>
+        .search-results-fio {
+            text-align: center;
+            font-size: 18px;
+
+        }
+
+        .search-results-full_info
+        {
+            text-align: center;
+        }
+
+        .search-results-dates {
+            color: black;
+            float: left;
+        }
+
+        .search-results-location {
+            color: black;
+            float: right;
+        }
+
+        .search-results-description
+        {
+            float: left;
+            width: 100%;;
+        }
+    </style>
+</search-one-result>

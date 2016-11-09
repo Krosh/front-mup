@@ -90,6 +90,8 @@
             <a href="#" class="js-map-toggle-charts js-showed">Показать/скрыть диаграммы</a>
         </div>
     </div>
+
+<!--    Карточка кладбища   -->
     <div class="sidebar left sidebar-card card_cont">
         <div class="card">
             <div class="card_title-wrap">
@@ -167,6 +169,8 @@
             </div>
         </div>
     </div>
+
+    <!--    Результаты поиска   -->
     <div class="sidebar left sidebar-search-card card_cont">
         <div class="card">
             <div class="card_title-wrap card-wrap-find">

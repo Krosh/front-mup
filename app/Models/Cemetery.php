@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 
 /**
@@ -85,6 +86,7 @@ class Cemetery extends Model
 
         if (!isset($data) || !isset($data->coordinates))
         {
+            echo $json;
             return false;
         }
 
@@ -115,20 +117,42 @@ class Cemetery extends Model
 
     public function save(array $options = [])
     {
-        if ($this->exists && $this->isDirty("cadastr_num"))
+        $new = !$this->exists;
+        if (!$new && $this->isDirty("cadastr_num"))
             $this->loadCoords();
 
+        $result = parent::save($options);
 
-        return parent::save($options);
+        if ($new)
+            if (!$this->loadCoords());
+
     }
 
     public function getDynamicGrave()
     {
+        $queryResults = DB::table("deads")
+            ->join("graves","deads.idGrave","=","graves.id")
+            ->select(DB::raw("COUNT(deads.id) as numDeads"))
+            ->addSelect("yearDeath as year_death") // TODO:: Когда вместо годов начнут использоваться даты, тут нужно будет переделать
+            ->where("idCemetery","=",$this->id)
+            ->groupBy("year_death")
+            ->having("year_death", ">", 0)
+            ->orderBy("year_death")
+            ->get();
+
+        $categories = [];
+        $data = [];
+        foreach ($queryResults as $item)
+        {
+            $categories[] = $item->year_death;
+            $data[] = $item->numDeads;
+        }
+
         $result = [];
         $result["title"] = ["text" => "Динамика кол-ва захоронений"];
-        $result["xAxis"] = ["categories" => ["январь", "февраль", "март"]];
+        $result["xAxis"] = ["categories" => $categories];
         $result["yAxis"] = ["title" => ["text" => "Кол-во захоронений"]];
-        $result["series"] = [["name" => "Кол-во", "data" => [10,20,30]]];
+        $result["series"] = [["name" => "Кол-во", "data" => $data]];
         return json_encode($result);
     }
 
@@ -139,7 +163,10 @@ class Cemetery extends Model
 
     public function getGraveCount()
     {
-        return 100;
+        return DB::table("deads")
+            ->join("graves","deads.idGrave","=","graves.id")
+            ->where("idCemetery","=",$this->id)
+            ->count();
     }
 
     public function getGraves()

@@ -184,11 +184,10 @@ class CemeteriesController extends Controller
         if ($cemetery->cadastr_num != $cadastr_num)
         {
             $cemetery->cadastr_num = $cadastr_num;
-            if (!$cemetery->loadCoords())
-                abort(404);
             $cemetery->save();
         }
         $points = $cemetery->getCoords();
+
         if (count($points) == 0)
             abort(404);
 
