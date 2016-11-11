@@ -22,6 +22,7 @@ Route::group(["prefix" => "import"], function()
     Route::get("xml", "ImportController@xml");
     Route::get("load", "ImportController@load_xml");
     Route::post("save", "ImportController@save_xml");
+    Route::get("regsystem","ImportController@regsystem");
 });
 
 Route::group(["prefix" => "cemetery"], function()

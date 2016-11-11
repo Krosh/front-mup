@@ -65,6 +65,22 @@ class GraveTest extends TestCase
     }
 
 
+    public function testImportFromJson()
+    {
+        $data = '[{"id":"156","dateDeath":"29.10.2016","family":"Иванов","name":"иван","patron":"иванович","dateBirth":"01.08.1950","cemetery":"1","quarter":"66","area":null,"hasTalon":null,"latitude":"53","longitude":"83.56553000","sizeOfArea":"5"}]';
+        $obj = json_decode($data);
+        $grave = Grave::loadFromRegsystem($obj[0]);
+        $deads = $grave->getDeads();
+        $this->assertEquals(1,count($deads),"count deads is wrong");
+        $this->assertEquals("Иванов Иван Иванович",$deads[0]->getFio(), "FIO IS wrong");
+        $this->assertEquals("1950-08-01",$deads[0]->dateBorn, "date born is wrong");
+        $this->assertEquals("2016-10-29",$deads[0]->dateDeath, "date death is wrong");
+        $this->assertEquals(5,$grave->square,"square is wrong");
+        $this->assertEquals(83.56553000,$grave->longitude,"longitude is wrong");
+        $this->assertEquals(53,$grave->latitude,"latitude is wrong");
+        $this->assertEquals(156,$grave->idFromRegsystem,"idFromRegsystem is wrong");
+    }
+
     public function testMakeFromData()
     {
         $data = [];

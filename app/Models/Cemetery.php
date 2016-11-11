@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\DB;
  * @property string $watcher_phone
  * @property string $organisation_name
  * @property integer $idFromRegion22
+ * @property integer $idFromRegsystem
  * @property integer $idParentCemetery
  * @property boolean $hasTestData
  * @property integer $test_square
@@ -45,14 +46,25 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereHasTestData($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereTestSquare($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereTestGraveCount($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereIdFromRegsystem($value)
  * @mixin \Eloquent
+ * @property boolean $hasImport
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereHasImport($value)
  */
 class Cemetery extends Model
 {
-    protected $fillable = ['name','cadastr_num','idCity', 'watcher_phone', 'watcher_name', 'organisation_name', 'idParentCemetery', 'hasTestData', 'test_square', 'test_graveCount'];
-
+    protected $fillable = ['name','cadastr_num','idCity', 'watcher_phone', 'watcher_name', 'organisation_name', 'idParentCemetery', 'hasTestData', 'test_square', 'test_graveCount', "idFromRegsystem","idFromRegion22"];
 
     public $_coords = null;
+
+    static public $defaultValues = [
+        "test_square" => 0,
+        "test_graveCount" => 0,
+        "idFromRegsystem" => -1,
+        "idFromRegion22" => 0,
+        "hasTestData" => 0,
+    ];
+
     public function getCoords()
     {
         if ($this->_coords == null)

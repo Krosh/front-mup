@@ -304,7 +304,7 @@
             color: '#000',
             iconSize: new L.Point(80, 40),
             weight: 1,
-            radius: 40,
+            radius: 10,
             fillOpacity: 0.9,
             data : {
                 'Свободная:': elem.features[0].properties.totalSize - elem.features[0].properties.fillSize,

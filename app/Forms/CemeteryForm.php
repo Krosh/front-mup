@@ -43,6 +43,12 @@ class CemeteryForm extends Form
             ->add("organisation_name","text", [
                 "label" => "Наименование обслуживающей организации"
             ])
+            ->add("idFromRegion22", "number", [
+                "label" => "Код в системе Регион22",
+            ])
+            ->add("idFromRegsystem", "number", [
+                "label" => "Код в системе regsystem",
+            ])
             ->add("cadastr_size","static", ["tag" => "div", "label" => "Кадастровая площадь"])
             ->add("hasTestData","checkbox",[
                 "label" => "Заполнять тестовыми данными",

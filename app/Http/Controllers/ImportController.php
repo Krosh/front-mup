@@ -12,6 +12,19 @@ use PHPExcel_IOFactory;
 
 class ImportController extends Controller
 {
+
+    public function regsystem()
+    {
+        $date = "2016-01-01";
+        $url = "http://regsystem.brn22memory.ru/api/deadWithCoords?date=".$date;
+        $file = file_get_contents($url);
+        $data = json_decode($file);
+        foreach ($data as $item)
+        {
+            var_dump($item);
+        }
+    }
+
     public function load_xml(FormBuilder $formBuilder)
     {
         $form = $formBuilder->create(UploadXmlForm::class, [
@@ -60,8 +73,6 @@ class ImportController extends Controller
 
     public function excel()
     {
-
-
         $file =  "/home/ritualuh/public_html/excel.xlsx";
         $objPHPExcel = PHPExcel_IOFactory::createReaderForFile($file);
         $objXLS = $objPHPExcel->load($file);
@@ -102,10 +113,7 @@ class ImportController extends Controller
             $data[] = $newRow;
             $currentRow++;
         }
-
-
         var_dump($currentRow);
         return "";
-
     }
 }

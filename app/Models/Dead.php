@@ -52,6 +52,18 @@ class Dead extends Model
         return $duplicate;
     }
 
+    public function setDateBorn($value)
+    {
+        $mas = explode(".",$value);
+        $this->dateBorn = implode("-",array_reverse($mas));
+    }
+
+    public function setDateDeath($value)
+    {
+        $mas = explode(".",$value);
+        $this->dateDeath = implode("-",array_reverse($mas));
+    }
+
     public function setYearBorn($value)
     {
         $this->yearBorn = $value * 1;

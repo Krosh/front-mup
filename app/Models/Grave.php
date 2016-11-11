@@ -113,6 +113,7 @@ class Grave extends Model
         return $this->_deads;
     }
 
+    // TODO:: Убрать когда начнут использоваться даты
     private function addDead($fio, $yearBorn,$yearDeath,$memorial,$sizeMemorial,$memorialMaterial)
     {
         $dead = new Dead();
@@ -126,6 +127,18 @@ class Grave extends Model
         $this->numDeads++;
     }
 
+    private function addDeadWithDates($fio, $dateBorn,$dateDeath,$memorial,$sizeMemorial,$memorialMaterial)
+    {
+        $dead = new Dead();
+        $dead->parseFio($fio);
+        $dead->setDateBorn($dateBorn);
+        $dead->setDateDeath($dateDeath);
+        $dead->memorial = $memorial;
+        $dead->sizeMemorial = $sizeMemorial;
+        $dead->memorialMaterial = $memorialMaterial;
+        $this->_deads[] = $dead;
+        $this->numDeads++;
+    }
 
     public function save(array $options = [])
     {
@@ -182,6 +195,13 @@ class Grave extends Model
             $this->square = $arr[0] * $arr[1];
     }
 
+    /**
+     * Ищет Grave по numGrave и idCemetery и устанавливает ему параметры из массива,
+     * если не находит, то возвращает новосозданную запись с установленными параметрами
+     * используется при импорте из Excel
+     * @param $data Данные из excel
+     * @return \App\Models\Grave
+     */
     public static function loadFromData($data)
     {
         $grave = new Grave();
@@ -200,6 +220,10 @@ class Grave extends Model
         }
     }
 
+    /**
+     * Установка передаваемых параметров из excel
+     * @param $data данные из excel
+     */
     public function makeFromData($data)
     {
         $this->setCemeteryByString($data[0]["nameCemetery"]);
@@ -234,6 +258,30 @@ class Grave extends Model
 
         $this->setWw2ByString($ww2);
     }
+
+
+    /**
+     * Возвращает объект Grave по данным из regsystem или ложь в случае нахождения дубля в БД
+     * @param $data Данные распарсенные из json
+     * @return Grave|false
+     */
+    public static function loadFromRegsystem($data)
+    {
+        $duplicate = Grave::where("idFromRegsystem",$data->id)
+            ->first();
+        if ($duplicate == null)
+        {
+            $grave = new Grave();
+            $grave->idFromRegsystem = $data->id;
+            $grave->addDeadWithDates($data->family." ".$data->name." ".$data->patron,$data->dateBirth,$data->dateDeath,"","","");
+            $grave->latitude = $data->latitude;
+            $grave->square = $data->sizeOfArea;
+            $grave->longitude = $data->longitude;
+        } else
+            $grave = $duplicate;
+        return $grave;
+    }
+
 
     public function loadDeads()
     {
