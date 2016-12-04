@@ -20,7 +20,6 @@
     <title>Laravel</title>
     <link rel="stylesheet" href="{{URL::asset('css/all.css')}}">
     <link rel="stylesheet" href="{{URL::asset('css/app.css')}}">
-    <script src="{{URL::asset('js/all.js')}}"></script>
     <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <script src="{{URL::asset('js/components/riot-leaflet.tag.html')}}" type="riot/tag"></script>
@@ -28,6 +27,7 @@
     <script src="{{URL::asset('js/components/search-one-result.tag.html')}}" type="riot/tag"></script>
     <script src="{{URL::asset('js/components/search-results.tag.html')}}" type="riot/tag"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/riot/2.6.2/riot+compiler.min.js"></script>
+    <script src="{{URL::asset('js/all.js')}}"></script>
 
 
 </head>
@@ -59,6 +59,9 @@
             </div>
             <div class="b-find__row js-search-options" style="display: none">
                 <div>
+                    asdasdas:asdasdasd<br>
+                    asdasdas:asdasdasd<br>
+                    asdasdas:asdasdasd<br>
                 </div>
             </div>
 
@@ -118,6 +121,14 @@
                     </tr>
                     <tr>
                         <td class = "card__icon-column">
+                            <i class="fa fa-2x fa-lock"></i>
+                        </td>
+                        <td>
+                            <p class="js-status">Закрыто</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class = "card__icon-column">
                             <i class="fa fa-user-circle fa-2x"></i>
                         </td>
                         <td>
@@ -153,7 +164,26 @@
                             <img class="card__icon-img" src="{{url('/images/size.png')}}">
                         </td>
                         <td>
-                            <p class="js-square-info">123</p>
+                            <span class="has-hint">
+                                <span class="js-square-total">123</span>
+                                <span class="hint">
+                                    Общая площадь
+                                </span>
+                            </span>
+                            /
+                            <span class="has-hint">
+                                <span class="js-deads-square">123</span>
+                                <span class="hint">
+                                    Под захоронениями
+                                </span>
+                            </span>
+                            /
+                            <span class="has-hint">
+                                <span class="js-square-filled">123</span>
+                                <span class="hint">
+                                    Занятая площадь
+                                </span>
+                            </span>
                         </td>
                     </tr>
                     <tr>
@@ -161,7 +191,19 @@
                             <img class="card__icon-img" src="{{url('/images/grave.png')}}">
                         </td>
                         <td>
-                            <p class="js-graves-count">123</p>
+                            <span class="has-hint">
+                                <span class="js-graves-count">123</span>
+                                <span class="hint">
+                                    Захоронений
+                                </span>
+                            </span>
+                            /
+                            <span class="has-hint">
+                                <span class="js-deads-count">123</span>
+                                <span class="hint">
+                                    Покойных
+                                </span>
+                            </span>
                         </td>
                     </tr>
 
@@ -200,293 +242,42 @@
 
 </div>
 
-<!--<a href="#dead-modal" class="default_popup" style="visibility: hidden">Default Inline</a>
--->
-
 <script>
-    var map;
-    var cemeteries = [];
-    var heatmaps = [];
-    var modes = [];
-    var MODE_CHART = 1;
-    var MODE_HEATMAP = 2;
-    var pieCharts;
-    var maxValue = 100;
-    var tempMarker = null;
-    var defaultMapConfig = {
-        zoom: 10,
-        centerPos: [53.315408, 83.822352],
-    }
-
-
-    function addMarker(lat,lng)
-    {
-        if (tempMarker != null)
-            removeMarker();
-        tempMarker = L.marker([lat, lng]).addTo(map.map);
-        tempMarker.on("click",showSearchContainer);
-    }
-
-    function removeMarker()
-    {
-        map.map.removeLayer(tempMarker);
-    }
-
-
-    initMapContainer();
-
-
-    riot.mount("riot-leaflet",{
-        zoom: defaultMapConfig.zoom,
-        centerPos: defaultMapConfig.centerPos,
-        onMountMap: function() {
-            map = this;
-            map.map.zoomControl.setPosition('topright');
-            aja()
-                .url('<?=url("/cemeteries/info"); ?>')
-                .on('success', (data) => {
-                    pieCharts = map.addChartLayer("pie-charts");
-                    data.forEach((elem) => {
-                            modes[elem.id] = MODE_CHART;
-                            addCemeteryPolygon(elem.geo,elem.id);
-                            addChart(elem.geo);
-                            addHeatmap(elem.heatmap,elem.id);
-                        });
-                    initMapContainer();
-                    map.map.on("zoomend", function(e){
-                        let zoomValue = map.map.getZoom();
-                        let newRadius = zoomValue < 12 ? Math.max(40 / Math.pow(2, 12 - zoomValue),4): 40;
-                        pieCharts.eachLayer(function(figure)
-                        {
-                            figure.options.radiusX = figure.options.radiusY = figure.options.radius = newRadius;
-                            figure.redraw();
-                        });
-                    });
-                })
-            .go();
-            }
-        });
-
-
-
-    var searchResults = null;
-    riot.mount("search-results",{onLoad: function() {searchResults = this}});
-
-    var chart = null;
-    riot.mount("rg-highcharts",{
-        onLoad: function() {
-            chart = this;
-        },
-        chartOptions: {}
-    });
-
-    var addCemeteryPolygon = (elem, index) => {
-        let layer = map.addGeoJsonLayer("cemetery"+index,elem);
-        layer.bringToBack();
-        layer.on("click",(e) => {
-            showPanel(elem.features[0].properties);
-        });
-        map.map.removeLayer(layer);
-        cemeteries[index] = layer;
-    }
-
-    var addHeatmap = (elem, index) => {
-        let heat = L.heatLayer(elem.points, {radius: elem.radius});
-        heatmaps[index] = heat;
-    }
-
-    var formatCemeterySize = (text) => {
-        return text.toFixed(0).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-    }
-
-    var addChart = (elem) => {
-        let chart = new L.PieChartMarker(new L.LatLng(elem.features[0].properties.centerLat, elem.features[0].properties.centerLon), {
-            color: '#000',
-            iconSize: new L.Point(80, 40),
-            weight: 1,
-            radius: 10,
-            fillOpacity: 0.9,
-            data : {
-                'Свободная:': elem.features[0].properties.totalSize - elem.features[0].properties.fillSize,
-                'Занятая:': elem.features[0].properties.fillSize,
-            },
-            chartOptions : {
-                'Свободная:': {
-                    fillColor: '#FF0000',
-                    displayText: formatCemeterySize,
-                },
-                'Занятая:': {
-                    fillColor: '#BDC9E1',
-                    displayText: formatCemeterySize,
-                },
-            }
-        });
-        chart.on("click",(e) => {
-            showPanel(elem.features[0].properties);
-       })
-       pieCharts.addLayer(chart);
-    }
-
-
-    // Init jquery events
-    $(document).ready(function ()
-    {
-        $(".js-search").click(search);
-        $(".js-search-form").submit(search);
-    });
-
-    function search()
-    {
-        aja()
-            .url('<?=url("/deads/search"); ?>')
-            .data({fio: $("#js-search-fio").val()})
-            .on('success', function(data) {
-                showSearchResults(data)
-            })
-            .go();
-        return false;
-    }
-
-
-    function showHeatMap(idCemetery)
-    {
-        showCemeteryPolygon(idCemetery);
-        heatmaps[idCemetery].addTo(map.map);
-    }
-
-    function hideHeatMap(idCemetery)
-    {
-        hideCemeteryPolygon(idCemetery);
-        map.map.removeLayer(heatmaps[idCemetery]);
-    }
-
-    function showSearchContainer()
-    {
-        $(".sidebar.left.sidebar-menu").trigger("sidebar:close");
-        $(".sidebar.left.sidebar-card").fadeOut();
-        $(".sidebar.left.sidebar-search-card").fadeIn();
-    }
-
-
-    function showSearchResults(data)
-    {
-        showSearchContainer();
-        searchResults.loadItems(data);
-    }
-
-    function showDefaultMap(){
-        hideCemeteriesPolygons()
-        removeMarker();
-        map.map.addLayer(pieCharts);
-        map.map.setView(defaultMapConfig.centerPos,defaultMapConfig.zoom);
-    }
-
-    function showCemeteryPolygon(idCemetery)
-    {
-        let cemeteryLayer = cemeteries[idCemetery];
-        map.map.addLayer(cemeteryLayer);
-        map.map.fitBounds(cemeteryLayer.getBounds(), {animate: true});
-    }
-
-    function hideCemeteryPolygon(idCemetery)
-    {
-        map.map.removeLayer(cemeteries[idCemetery]);
-    }
-
-
-    function hideCemeteriesPolygons()
-    {
-        cemeteries.forEach((elem) => {
-            map.map.removeLayer(elem);
-        });
-    }
-
-    function showDeadOnMap(idDead)
-    {
-        aja()
-            .url('<?=url("/deads/info"); ?>')
-            .data({id: idDead})
-            .on('success', function(data) {
-                showCemeteryPolygon(data.idCemetery);
-                addMarker(data.lat,data.lng);
-                map.map.removeLayer(pieCharts);
-            })
-            .go();
-    }
-
-
-    function showDeadCard(idDead)
-    {
-        aja()
-            .url('<?=url("/deads/info"); ?>')
-            .data({id: idDead})
-            .on('success', function(data) {
-                // Костыль
-                $(".default_popup").click();
-            })
-            .go();
-    }
-
-    function clickHeatMapButton(id)
-    {
-        $(".btn-card-active").removeClass("btn-card-active");
-        modes[id] = MODE_HEATMAP;
-        showHeatMap(id);
-        map.map.removeLayer(pieCharts);
-        $(".js-btn-heatmap").addClass("btn-card-active");
-    }
-
-    function clickChartButton(id)
-    {
-        $(".btn-card-active").removeClass("btn-card-active");
-        modes[id] = MODE_CHART;
-        hideHeatMap(id);
-        map.map.addLayer(pieCharts);
-        $(".js-btn-chart").addClass("btn-card-active");
-    }
-
-
-    function showPanel(params)
-    {
-        $(".sidebar.left.sidebar-menu").trigger("sidebar:close");
-        $(".sidebar.left.sidebar-card").fadeIn();
-        $(".sidebar.left.sidebar-search-card").fadeOut();
-        $(".card .js-name").text(params.name);
-        $(".card .js-adres").text(params.adres);
-        $(".card .js-watcher-name").text(params.watcher_name);
-        $(".card .js-watcher-phone").text(params.watcher_phone);
-        $(".card .js-cadastr-num").text(params.cadastr_num);
-        $(".card .js-organisation-name").text(params.organisation_name);
-        $(".card .js-square-info").html(params.square_info);
-        $(".card .js-graves-count").text(params.graves_count);
-        $(".js-btn-heatmap").off("click").click(() => {clickHeatMapButton(params.id)});
-        $(".js-btn-chart").off("click").click(() => {clickChartButton(params.id)});
-        if (modes[params.id] == MODE_CHART)
-        {
-            clickChartButton(params.id);
-        } else if (modes[params.id] == MODE_HEATMAP)
-        {
-            clickHeatMapButton(params.id);
-        }
-        chart.changeChart(JSON.parse(params.graves_dynamic));
-    }
-
-
-    function initMapContainer()
-    {
-        var mapContainer = document.getElementById("map");
-        mapContainer.style.width = document.documentElement.clientWidth.toString()+"px";
-        mapContainer.style.height = document.documentElement.clientHeight.toString()+"px";
-    }
 
 
 </script>
 <script>
     $(document).ready(function () {
-        $(".btn-card").on("click",function () {
+        $(".card_cont").mCustomScrollbar({
+            theme:"dark-3",
+            scrollButtons:{ enable: true }
+        });
+        $(".btn-card").click(function () {
             $(".btn-card").removeClass('btn-card-active');
             $(this).toggleClass('btn-card-active');
-        })
+        });
+        $(".js-toggle-search-options").click(function(elem){
+            $(".js-search-options").slideToggle();
+        });
+        $(".btnCardClose").click(
+            function () {
+                $(".sidebar.left.sidebar-card").fadeOut();
+                app.cardClose();
+            }
+        );
+        $(".btnSearchCardClose").click(
+            function () {
+                $(".sidebar.left.sidebar-search-card").fadeOut();
+                app.searchCardClose();
+            }
+        );
+
+//        initMapContainer();
+        let baseUrl = "/public";
+        var app = new MapApplication(baseUrl);
+        app.init();
+        $(".js-search").click(app.search);
+        $(".js-search-form").submit(app.search);
     })
 </script>
 </body>

@@ -79,6 +79,8 @@ class GraveTest extends TestCase
         $this->assertEquals(83.56553000,$grave->longitude,"longitude is wrong");
         $this->assertEquals(53,$grave->latitude,"latitude is wrong");
         $this->assertEquals(156,$grave->idFromRegsystem,"idFromRegsystem is wrong");
+        $this->assertEquals(7,$grave->idCemetery,"cemetery is wrong");
+
     }
 
     public function testMakeFromData()

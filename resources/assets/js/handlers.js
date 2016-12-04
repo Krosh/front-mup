@@ -23,16 +23,6 @@ $(document).ready(
                 $(".sidebar.left.sidebar-card").fadeIn();
             }
         );
-        $(".btnCardClose").click(
-            function () {
-                $(".sidebar.left.sidebar-card").fadeOut();
-            }
-        );
-        $(".btnSearchCardClose").click(
-            function () {
-                $(".sidebar.left.sidebar-search-card").fadeOut();
-            }
-        );
         $(".b-shadow").click(
             function () {
                 $(".sidebar.left.sidebar-menu").trigger("sidebar:close");

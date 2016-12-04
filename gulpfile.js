@@ -24,6 +24,6 @@ elixir(function (mix) {
         'progressbar.js',
         'jquery.mCustomScrollbar.js',
         'aja.min.js',
-        'script.js'
+        'MapApplication.js',
     ]);
 });

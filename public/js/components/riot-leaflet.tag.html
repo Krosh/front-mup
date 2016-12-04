@@ -24,12 +24,12 @@
             script.type = 'text/javascript'
             script.src = 'https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js'
             script.onreadystatechange = script.onload = () => {
+
                 // loading heatmap script
                 let heatMapScript = document.createElement('script')
                 heatMapScript.type = 'text/javascript'
                 heatMapScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js'
                 document.body.appendChild(heatMapScript)
-
 
                 // loading dvf scripts and css files
                 let script = document.createElement('script')

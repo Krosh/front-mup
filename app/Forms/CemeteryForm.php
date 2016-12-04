@@ -34,6 +34,11 @@ class CemeteryForm extends Form
                 "empty_value" => "Выберите родительское кладбище",
 //                'rules' => 'required',
             ])
+            ->add("isClosed","checkbox",[
+                "label" => "Кладбище закрыто",
+                "attr" => [
+                ]
+            ])
             ->add("watcher_name","text", [
                 "label" => "ФИО смотрителя"
             ])

@@ -1,9 +1,15 @@
+html, body
+{
+  height: 100%;
+}
 .sidebar.left {
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
 }
+
+
 
 .sidebars > .sidebar {
   box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
@@ -21,6 +27,7 @@
 
 .b-map {
   width: 100%;
+  height: 100%;
 }
 
 .b-shadow {
@@ -63,6 +70,11 @@
 
 .sidebar-menu__title {
   color: black;
+}
+
+#map {
+  weight: 100%;
+  height: 100%;
 }
 
 #btnMenu {
@@ -235,4 +247,38 @@
   border: none;
   color: white;
   background-color: #4caf50;
+}
+.has-hint {
+  position: relative;
+  display: inline;
+}
+.has-hint .hint {
+  position: absolute;
+  width:140px;
+  color: #FFFFFF;
+  background: #000000;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  visibility: hidden;
+  border-radius: 6px;
+}
+.has-hint .hint:after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -8px;
+  width: 0; height: 0;
+  border-top: 8px solid #000000;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+}
+span:hover.has-hint .hint {
+  visibility: visible;
+  opacity: 0.8;
+  bottom: 30px;
+  left: 50%;
+  margin-left: -76px;
+  z-index: 999;
 }

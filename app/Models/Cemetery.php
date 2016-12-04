@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-
 /**
  * App\Models\Cemetery
  *
@@ -23,11 +22,13 @@ use Illuminate\Support\Facades\DB;
  * @property string $watcher_phone
  * @property string $organisation_name
  * @property integer $idFromRegion22
- * @property integer $idFromRegsystem
  * @property integer $idParentCemetery
  * @property boolean $hasTestData
  * @property integer $test_square
  * @property integer $test_graveCount
+ * @property integer $idFromRegsystem
+ * @property boolean $hasImport
+ * @property boolean $isClosed
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereCreatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereUpdatedAt($value)
@@ -47,13 +48,13 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereTestSquare($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereTestGraveCount($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereIdFromRegsystem($value)
- * @mixin \Eloquent
- * @property boolean $hasImport
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereHasImport($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Cemetery whereIsClosed($value)
+ * @mixin \Eloquent
  */
 class Cemetery extends Model
 {
-    protected $fillable = ['name','cadastr_num','idCity', 'watcher_phone', 'watcher_name', 'organisation_name', 'idParentCemetery', 'hasTestData', 'test_square', 'test_graveCount', "idFromRegsystem","idFromRegion22"];
+    protected $fillable = ['name','cadastr_num','idCity', 'watcher_phone', 'watcher_name', 'organisation_name', 'idParentCemetery', 'hasTestData', 'test_square', 'test_graveCount', "idFromRegsystem","idFromRegion22", "isClosed"];
 
     public $_coords = null;
 
@@ -176,7 +177,7 @@ class Cemetery extends Model
         return json_encode($result);
     }
 
-    public function getFilledSize()
+    public function getDeadsSquare()
     {
         $MM_TO_METERS_COEF = 1000*1000;
         if ($this->hasTestData)
@@ -195,7 +196,46 @@ class Cemetery extends Model
         }
     }
 
+    public function getFilledSize()
+    {
+        $MM_TO_METERS_COEF = 1000*1000;
+        $ADDITIVE_SIZE_TO_GRAVE = 2.5;
+        if ($this->hasTestData)
+        {
+            return $this->test_square;
+        } else
+        {
+            $sum = DB::table("graves")
+                    ->where("idCemetery","=",$this->id)
+                    ->sum("square") / $MM_TO_METERS_COEF;
+            $sum += DB::table("graves")
+                    ->join("cemeteries","graves.idCemetery","=","cemeteries.id")
+                    ->where("idParentCemetery","=",$this->id)
+                    ->sum("square")/ $MM_TO_METERS_COEF;
+            $sum += $this->getGraveCount() * $ADDITIVE_SIZE_TO_GRAVE;
+            return $sum;
+        }
+    }
+
+
     public function getGraveCount()
+    {
+        if ($this->hasTestData)
+        {
+            return $this->test_graveCount;
+        } else
+        {
+            return DB::table("graves")
+                ->where("idCemetery","=",$this->id)
+                ->count()
+             + DB::table("graves")
+                ->join("cemeteries","graves.idCemetery","=","cemeteries.id")
+                ->where("idParentCemetery","=",$this->id)
+                ->count();
+        }
+    }
+
+    public function getDeadCount()
     {
         if ($this->hasTestData)
         {
@@ -205,9 +245,15 @@ class Cemetery extends Model
             return DB::table("deads")
                 ->join("graves","deads.idGrave","=","graves.id")
                 ->where("idCemetery","=",$this->id)
+                ->count()
+            + DB::table("deads")
+                ->join("graves","deads.idGrave","=","graves.id")
+                ->join("cemeteries","graves.idCemetery","=","cemeteries.id")
+                ->where("idParentCemetery","=",$this->id)
                 ->count();
         }
     }
+
 
     public function getGraves()
     {
@@ -247,18 +293,22 @@ class Cemetery extends Model
         $cemeteryFeature["geometry"]["coordinates"][0] = [];
         $cemeteryFeature["properties"]["id"] = $this->id;
         $cemeteryFeature["properties"]["name"] = $this->name;
+        $cemeteryFeature["properties"]["status"] = $this->isClosed;
         $cemeteryFeature["properties"]["centerLat"] = $this->getCoords()[0]->latitude;
         $cemeteryFeature["properties"]["centerLon"] = $this->getCoords()[0]->longitude;
-        $cemeteryFeature["properties"]["totalSize"] = $this->cadastr_size;
-        $cemeteryFeature["properties"]["fillSize"] = $this->getFilledSize();
+        $cemeteryFeature["properties"]["totalSize"] = $this->cadastr_size/10000;
+        $cemeteryFeature["properties"]["fillSize"] = $this->getFilledSize()/10000;
         $cemeteryFeature["properties"]["adres"] = $this->cadastr_adres;
         $cemeteryFeature["properties"]["popup"] = $this->name;
         $cemeteryFeature["properties"]["watcher_name"] = $this->watcher_name;
         $cemeteryFeature["properties"]["watcher_phone"] = $this->watcher_phone;
-        $cemeteryFeature["properties"]["cadastr_num"] = $this->cadastr_num;
+        $cemeteryFeature["properties"]["cadastr_num"] = [$this->cadastr_num];
         $cemeteryFeature["properties"]["organisation_name"] = $this->organisation_name;
-        $cemeteryFeature["properties"]["square_info"] = number_format($this->getFilledSize(),0,","," ")." м<sup>2</sup>"."/".number_format($this->cadastr_size,0,","," ")." м<sup>2</sup>";
+        $cemeteryFeature["properties"]["square_total"] = number_format($this->cadastr_size/10000,0,","," ")." га";
+        $cemeteryFeature["properties"]["deads_square"] = number_format($this->getDeadsSquare()/10000,0,","," ")." га";
+        $cemeteryFeature["properties"]["square_filled"] = number_format($this->getFilledSize()/10000,0,","," ")." га";
         $cemeteryFeature["properties"]["graves_count"] = $this->getGraveCount();
+        $cemeteryFeature["properties"]["deads_count"] = $this->getDeadCount();
         $cemeteryFeature["properties"]["graves_dynamic"] = $this->getDynamicGrave();
 
         foreach ($this->getCoords() as $point)
@@ -274,6 +324,7 @@ class Cemetery extends Model
                 $coords = [$point->longitude*1,$point->latitude*1];
                 $cemeteryFeature["geometry"]["coordinates"][$numCemetery][0][] = $coords;
             }
+            $cemeteryFeature["properties"]["cadastr_num"][] = $childCemetery->cadastr_num;
             $numCemetery++;
         }
 //        $cemeteryFeature["geometry"]["coordinates"][0][] = $cemeteryFeature["geometry"]["coordinates"][0][0];

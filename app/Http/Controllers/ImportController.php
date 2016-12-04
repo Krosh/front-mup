@@ -21,7 +21,12 @@ class ImportController extends Controller
         $data = json_decode($file);
         foreach ($data as $item)
         {
-            var_dump($item);
+            $grave = Grave::loadFromRegsystem($item);
+            if (!$grave->exists)
+            {
+                $grave->save();
+                $grave->getDeads()[0]->save();
+            }
         }
     }
 

@@ -262,7 +262,7 @@ class Grave extends Model
 
     /**
      * Возвращает объект Grave по данным из regsystem или ложь в случае нахождения дубля в БД
-     * @param $data Данные распарсенные из json
+     * @param Array $data Данные распарсенные из json
      * @return Grave|false
      */
     public static function loadFromRegsystem($data)
@@ -271,11 +271,16 @@ class Grave extends Model
             ->first();
         if ($duplicate == null)
         {
+            $cemetery = Cemetery::where("idFromRegsystem",$data->cemetery)->first();
+
             $grave = new Grave();
+            $grave->idCemetery = $cemetery->id;
             $grave->idFromRegsystem = $data->id;
             $grave->addDeadWithDates($data->family." ".$data->name." ".$data->patron,$data->dateBirth,$data->dateDeath,"","","");
             $grave->latitude = $data->latitude;
-            $grave->square = $data->sizeOfArea;
+            $grave->square = (int)$data->sizeOfArea;
+            $grave->sizeGrave = "";
+            $grave->state = Grave::$STATE_EMPTY;
             $grave->longitude = $data->longitude;
         } else
             $grave = $duplicate;
