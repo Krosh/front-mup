@@ -110,6 +110,7 @@ class ImportController extends Controller
                 {
                     $grave = Grave::loadFromData($data);
                     $grave->save();
+                    $grave->saveDeads();
 
                     $data = [];
                 }

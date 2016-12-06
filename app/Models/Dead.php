@@ -41,6 +41,8 @@ use Illuminate\Database\Eloquent\Model;
 class Dead extends Model
 {
 
+    protected $fillable = ['family', 'name', 'patron', 'dateBorn', 'dateDeath', 'material', 'sizeMaterial', 'memorialMaterial', 'idGrave'];
+
     public function findDuplicate()
     {
         $duplicate = Dead::where("idGrave",$this->idGrave)
@@ -66,12 +68,12 @@ class Dead extends Model
 
     public function setYearBorn($value)
     {
-        $this->yearBorn = $value * 1;
+        $this->yearBorn = (int)$value;
     }
 
     public function setYearDeath($value)
     {
-        $this->yearDeath = $value * 1;
+        $this->yearDeath = (int)$value;
     }
 
     public function copyFrom(Dead $item)
@@ -142,7 +144,11 @@ class Dead extends Model
         $result = "";
         $grave = $this->grave;
         return $grave->id;
-        return "adsa";
+    }
+
+    public function getGraveUrl()
+    {
+        return url("/graves/".$this->idGrave."/edit#dead");
     }
 
     public function getImagePath()

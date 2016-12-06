@@ -13,7 +13,8 @@
     <!-- Styles -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-    <link href="/css/app.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{URL::asset('css/all.css')}}">
+    <link rel="stylesheet" href="{{URL::asset('css/app.css')}}">
 
     <!-- Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

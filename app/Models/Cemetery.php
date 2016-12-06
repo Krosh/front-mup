@@ -149,7 +149,7 @@ class Cemetery extends Model
 
     }
 
-    public function getDynamicGrave()
+    public function getDiagramNumGravesByDates()
     {
         $queryResults = DB::table("deads")
             ->join("graves","deads.idGrave","=","graves.id")
@@ -168,11 +168,34 @@ class Cemetery extends Model
             $categories[] = $item->year_death;
             $data[] = $item->numDeads;
         }
-
         $result = [];
         $result["title"] = ["text" => "Динамика кол-ва захоронений"];
         $result["xAxis"] = ["categories" => $categories];
         $result["yAxis"] = ["title" => ["text" => "Кол-во захоронений"]];
+        $result["series"] = [["name" => "Кол-во", "data" => $data]];
+        return json_encode($result);
+    }
+
+    public function getDiagramNumGravesByStates()
+    {
+        $queryResults = DB::table("deads")
+            ->join("graves","deads.idGrave","=","graves.id")
+            ->select(DB::raw("COUNT(deads.id) as numDeads"))
+            ->addSelect("state")
+            ->where("idCemetery","=",$this->id)
+            ->groupBy("state")
+            ->get();
+        $categories = [];
+        $data = [];
+        foreach ($queryResults as $item)
+        {
+            $data[] = ["name" => Grave::getStates()[$item->state], "y" => $item->numDeads];
+        }
+        $result = [];
+        $result["chart"] = [
+            "type" => "pie",
+        ];
+        $result["title"] = ["text" => "Захоронения, сгруппированые по состоянию"];
         $result["series"] = [["name" => "Кол-во", "data" => $data]];
         return json_encode($result);
     }
@@ -309,7 +332,8 @@ class Cemetery extends Model
         $cemeteryFeature["properties"]["square_filled"] = number_format($this->getFilledSize()/10000,0,","," ")." га";
         $cemeteryFeature["properties"]["graves_count"] = $this->getGraveCount();
         $cemeteryFeature["properties"]["deads_count"] = $this->getDeadCount();
-        $cemeteryFeature["properties"]["graves_dynamic"] = $this->getDynamicGrave();
+        $cemeteryFeature["properties"]["graves_dynamic"] = $this->getDiagramNumGravesByDates();
+        $cemeteryFeature["properties"]["graves_by_states"] = $this->getDiagramNumGravesByStates();
 
         foreach ($this->getCoords() as $point)
         {

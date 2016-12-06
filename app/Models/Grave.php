@@ -81,7 +81,12 @@ class Grave extends Model
 
     public static function getStates()
     {
-        return [self::$STATE_NON_OK => "Неудовлетворительно", self::$STATE_OK => "Удовлетворительно", self::$STATE_FORGOTTEN => "Заброшено"];
+        return [self::$STATE_NON_OK => "Неудовлетворительно", self::$STATE_OK => "Удовлетворительно", self::$STATE_FORGOTTEN => "Заброшено", self::$STATE_EMPTY => "Не указано"];
+    }
+
+    public function getStateAsString()
+    {
+        return self::getStates()[$this->state];
     }
 
     public function setHasBorderByString($hasBorder)
@@ -103,13 +108,20 @@ class Grave extends Model
     }
 
 
-    private  $_deads = [];
+    private $_alreadyLoadedDeads = false;
+    private $_deads = [];
 
     /**
      * @return Dead[]
      */
     public function getDeads()
     {
+        if ($this->exists && !$this->_alreadyLoadedDeads)
+        {
+            $this->_alreadyLoadedDeads = true;
+            $this->loadDeads();
+        }
+
         return $this->_deads;
     }
 
@@ -145,7 +157,10 @@ class Grave extends Model
         $this->numDeads = count($this->_deads);
         if (!parent::save($options))
             return false;
+    }
 
+    public function saveDeads()
+    {
         foreach ($this->getDeads() as $dead)
         {
             $dead->idGrave = $this->id;
@@ -163,7 +178,7 @@ class Grave extends Model
             }
         },$this->_deads);
 
-       foreach ($this->getDeads() as $dead)
+        foreach ($this->getDeads() as $dead)
         {
             if (!$dead->save())
             {
@@ -305,6 +320,18 @@ class Grave extends Model
     public function cemetery()
     {
         return $this->belongsTo('\App\Models\Cemetery',"idCemetery");
+    }
+
+    public function getDeadsInfo()
+    {
+        $deads = $this->getDeads();
+        if (count($deads) == 0)
+        {
+            return "Нет данных о покойных";
+        } else
+        {
+            return $deads[0]->getFio()."(Всего ".count($deads)." покойных)";
+        }
     }
 
 

@@ -1,6 +1,6 @@
 ﻿<search-results>
    <div class = "search-results-container" each={ item, i in items }>
-        <search-one-result data={ item }></search-one-result>
+        <search-one-result parent = {this} data={ item }></search-one-result>
    </div>
 
 
@@ -16,6 +16,9 @@
             if (typeof opts.onLoad !== "undefined")
                 opts.onLoad.call(tag);
         });
+        showDeadOnMap(id) {
+            opts.app.showDeadOnMap(id);
+        }
     </script>
     <style scoped>
         .search-results-container {

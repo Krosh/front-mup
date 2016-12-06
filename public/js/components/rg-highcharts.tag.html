@@ -40,7 +40,8 @@
         }
 
         changeChart(chartOptions) {
-            chart.destroy();
+            if (chart != null)
+                chart.destroy();
             tag.chartOptions = chartOptions;
             tag.drawChart();
         }

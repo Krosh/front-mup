@@ -6,12 +6,6 @@
  * Time: 13:52
  * To change this template use File | Settings | File Templates.
  */
-//$cs = Yii::app()->clientScript;
-//$cs->registerCssFile("https://npmcdn.com/leaflet@0.7.7/dist/leaflet.css");
-//$cs->registerScriptFile("https://npmcdn.com/leaflet@0.7.7/dist/leaflet.js");
-//$cs->registerScriptFile("http://api-maps.yandex.ru/2.0/?load=package.map&lang=ru-RU");
-//$cs->registerScriptFile("/js/layer/tile/Yandex.js");
-
 ?>
 
 <!DOCTYPE html>
@@ -208,11 +202,19 @@
                     </tr>
 
                 </table>
-                <div style="width: 350px">
+                <div class="card_chart">
                     <rg-highcharts>
 
                     </rg-highcharts>
                 </div>
+
+                <div class="card_chart">
+                    <rg-highcharts>
+
+                    </rg-highcharts>
+                </div>
+
+
 
             </div>
         </div>
@@ -273,7 +275,7 @@
         );
 
 //        initMapContainer();
-        let baseUrl = "/public";
+        let baseUrl = "<?= route("base")?>";
         var app = new MapApplication(baseUrl);
         app.init();
         $(".js-search").click(app.search);

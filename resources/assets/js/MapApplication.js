@@ -22,7 +22,8 @@ var MapApplication = function(baseUrl) {
         centerPos: [53.315408, 83.822352],
     }
     this.searchResults = null;
-    this.chart = null;
+    this.dynamicChart = null;
+    this.typesChart = null;
 
 
     this.addMarker = function(lat, lng) {
@@ -189,12 +190,12 @@ this.searchCardClose = function() {
 this.setDefaultView = function() {
     this.modes.forEach((elem, i) => {
         if (elem == this.MODE_HEATMAP) {
-        this.clickChartButton(i);
-    }
-});
-this.removeMarker();
-this.hideCemeteriesPolygons();
-this.map.map.addLayer(this.pieCharts);
+          this.clickChartButton(i);
+        }
+    });
+    this.removeMarker();
+    this.hideCemeteriesPolygons();
+    this.map.map.addLayer(this.pieCharts);
 }
 
 
@@ -238,53 +239,56 @@ this.showPanel = function(params) {
         app.clickChartButton(params.id)
     });
     this.clickChartButton(params.id);
-    this.chart.changeChart(JSON.parse(params.graves_dynamic));
+    this.dynamicChart.changeChart(JSON.parse(params.graves_dynamic));
+    this.typesChart.changeChart(JSON.parse(params.graves_by_states));
 }
 
 
 this.init = function() {
-    riot.mount("riot-leaflet", {
-        zoom: defaultMapConfig.zoom,
-        centerPos: defaultMapConfig.centerPos,
-        onMountMap: function() {
-            app.map = this;
-            app.map.map.zoomControl.setPosition('topright');
-            aja()
-                .url(baseUrl + "/cemeteries/info")
-                .on('success', (data) => {
-                    app.pieCharts = app.map.addChartLayer("pie-charts");
-                    data.forEach((elem) => {
-                        app.modes[elem.id] = app.MODE_CHART;
-                        app.addCemeteryPolygon(elem.geo, elem.id);
-                        app.addChart(elem.geo);
-                        app.addHeatmap(elem.heatmap, elem.id);
-                    });
-                app.map.map.on("zoomend", onZoom);
-                })
-            .go();
-        }
-    })
+    riot.compile(() => {
+        var tags = riot.mount("rg-highcharts", {
+            chartOptions: {}
+        });
+        app.dynamicChart = tags[0];
+        app.typesChart = tags[1];
 
-    riot.mount("search-results", {
-        app: app,
-        onLoad: function() {
-            app.searchResults = this
-        }
+        riot.mount("riot-leaflet", {
+            zoom: defaultMapConfig.zoom,
+            centerPos: defaultMapConfig.centerPos,
+            onMountMap: function() {
+                app.map = this;
+                app.map.map.zoomControl.setPosition('topright');
+                aja()
+                    .url(baseUrl + "/cemeteries/info")
+                    .on('success', (data) => {
+                        app.pieCharts = app.map.addChartLayer("pie-charts");
+                        data.forEach((elem) => {
+                            app.modes[elem.id] = app.MODE_CHART;
+                            app.addCemeteryPolygon(elem.geo, elem.id);
+                            app.addChart(elem.geo);
+                            app.addHeatmap(elem.heatmap, elem.id);
+                        });
+                        app.map.map.on("zoomend", onZoom);
+                    })
+                .go();
+            }
+        });
+
+        riot.mount("search-results", {
+            app: app,
+            onLoad: function() {
+                app.searchResults = this
+            }
+        });
     });
-
-    riot.mount("rg-highcharts", {
-        onLoad: function() {
-            app.chart = this;
-        },
-        chartOptions: {}
-    });
-
 }
 
 
+var getRadius = (zoomValue) => {return zoomValue < 12 ? Math.max(40 / Math.pow(2, 12 - zoomValue), 4) : 40}
+
 var onZoom = (e) => {
     let zoomValue = app.map.map.getZoom();
-    let newRadius = zoomValue < 12 ? Math.max(40 / Math.pow(2, 12 - zoomValue), 4) : 40;
+    let newRadius = getRadius(zoomValue);
     app.pieCharts.eachLayer(function(figure) {
         figure.options.radiusX = figure.options.radiusY = figure.options.radius = newRadius;
         figure.redraw();

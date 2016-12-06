@@ -48,6 +48,7 @@ Route::get('/cemeteries/{id}/graves/create','GravesController@add');
 
 Route::get('/deads/search','DeadsController@search');
 Route::get('/deads/info','DeadsController@info');
+Route::get('/deads/create/{idGrave}','DeadsController@create');
 Route::resource('deads', 'DeadsController');
 
 
@@ -60,3 +61,5 @@ Route::get("/test", "CemeteriesController@test");
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
+
+Route::get('/', 'HomeController@index')->name("base");

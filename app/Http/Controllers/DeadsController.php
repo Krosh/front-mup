@@ -11,6 +11,16 @@ use Session;
 
 class DeadsController extends Controller
 {
+
+    public function filterRequestData($requestData)
+    {
+        $result = $requestData;
+        if ($result["dateBorn"] == "")
+            unset($result["dateBorn"]);
+        if ($result["dateDeath"] == "")
+            unset($result["dateDeath"]);
+        return $result;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -28,9 +38,11 @@ class DeadsController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function create()
+    public function create($idGrave)
     {
-        return view('deads.create');
+        $dead = new Dead();
+        $dead->idGrave = $idGrave;
+        return view('deads.create',["dead" => $dead]);
     }
 
     /**
@@ -43,13 +55,13 @@ class DeadsController extends Controller
     public function store(Request $request)
     {
         
-        $requestData = $request->all();
+        $requestData = $this->filterRequestData($request->all());
         
-        Dead::create($requestData);
+        $dead = Dead::create($requestData);
 
         Session::flash('flash_message', 'Dead added!');
 
-        return redirect('deads');
+        return redirect($dead->getGraveUrl());
     }
 
     /**
@@ -91,14 +103,14 @@ class DeadsController extends Controller
     public function update($id, Request $request)
     {
         
-        $requestData = $request->all();
-        
+        $requestData = $this->filterRequestData($request->all());
+
         $dead = Dead::findOrFail($id);
         $dead->update($requestData);
 
         Session::flash('flash_message', 'Dead updated!');
 
-        return redirect('deads');
+        return redirect($dead->getGraveUrl());
     }
 
     /**
@@ -110,11 +122,13 @@ class DeadsController extends Controller
      */
     public function destroy($id)
     {
-        Dead::destroy($id);
+        $dead = Dead::findOrFail($id);
+        $backUrl = $dead->getGraveUrl();
+        $dead->delete();
 
         Session::flash('flash_message', 'Dead deleted!');
 
-        return redirect('deads');
+        return redirect($backUrl);
     }
 
     public function info(Request $request)

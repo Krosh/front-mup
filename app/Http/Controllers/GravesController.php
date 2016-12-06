@@ -35,11 +35,16 @@ class GravesController extends Controller
         abort(404,"Not used");
     }
 
-    public function by_cemetery($id)
+    public function by_cemetery(Request $request, $id)
     {
+        if ($request->get("page") != null)
+        {
+            $request->session()->set("grave_page",$request->get("page"));
+        }
+        $page = $request->session()->get("grave_page",1);
         $cemetery = Cemetery::findOrFail($id);
         $graves = Grave::where("idCemetery",$id)
-            ->paginate(25);
+            ->paginate(25,['*'],'page',$page);
         return view('graves.index', ["graves" => $graves, "cemetery" => $cemetery]);
 
     }
@@ -102,7 +107,6 @@ class GravesController extends Controller
     public function edit($id, FormBuilder $formBuilder)
     {
         $grave = Grave::findOrFail($id);
-        $grave->loadDeads();
 
         $form = $formBuilder->create(GraveForm::class, [
             'method' => 'PATCH',
