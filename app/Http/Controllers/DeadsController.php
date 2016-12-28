@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Dead;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Session;
 
 class DeadsController extends Controller
@@ -145,15 +146,39 @@ class DeadsController extends Controller
     public function search(Request $request)
     {
         $fio = $request->get("fio");
+
+        $deathYear = $request->get("deathYear");
+        $deathMonth = $request->get("deathMonth");
+        $deathDay = $request->get("deathDay");
+
+
         $arr = explode(" ",$fio);
         $deads = Dead::where("family","LIKE", "%{$arr[0]}%");
         if (count($arr)>1)
             $deads = $deads->where("name","LIKE","%{$arr[1]}%");
         if (count($arr)>2)
             $deads = $deads->where("patron","LIKE","%{$arr[2]}%");
-        $deads = $deads->where("family", "<>", "")
-            ->where("name", "<>", "")
-            ->where("patron", "<>", "");
+        $deads = $deads->where("family", "<>", "");
+
+        if ($deathYear != "")
+        {
+            $deads = $deads->where(function($query) use($deathYear) {
+                $query->where("yearDeath", $deathYear)
+                    ->orWhere(DB::raw("YEAR(dateDeath)"), $deathYear);
+            });
+        }
+
+        if ($deathMonth != "")
+        {
+             $deads = $deads->where(DB::raw("MONTH(dateDeath)"), $deathMonth);
+        }
+
+        if ($deathDay != "")
+        {
+            $deads = $deads->where(DB::raw("DAY(dateDeath)"), $deathDay);
+        }
+
+
         $deads = $deads->take(20)->get();
         $result = [];
         foreach ($deads as $item)

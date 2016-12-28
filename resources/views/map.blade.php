@@ -30,43 +30,39 @@
     <div class="b-shadow">
     </div>
     <div class="b-navigation">
-        <div class="b-find">
-            <div class="b-find__row">
-                <div class="b-find__btn-menu">
-                    <div class="btn-menu__pic">
-                        <a href="#" id="btnMenu">
-                           <div> </div>
-                           <div> </div>
-                           <div> </div>
-                        </a>
+        <form action="#" class="js-search-form">
+            <div class="b-find">
+                <div class="b-find__row">
+                   {{-- <div class="b-find__btn-menu">
+                        <div class="btn-menu__pic">
+                            <a href="#" id="btnMenu">
+                                <div> </div>
+                                <div> </div>
+                                <div> </div>
+                            </a>
+                        </div>
                     </div>
-                </div>
-                <div class="b-find__field-find">
-                    <form action="#" class="js-search-form">
+                   --}} <div class="b-find__field-find">
                         <input type="text" id="js-search-fio" placeholder="Поиск по ФИО">
                         <a href = "#" class="js-search"><i class="fa fa-search" aria-hidden="true"></i></a>
-                    </form>
+                    </div>
+                    <div>
+                        <a href="#" class="js-toggle-search-options"> <i class="fa fa-cog" aria-hidden="true"></i> </a>
+                    </div>
                 </div>
-                <div>
-                    <a href="#" class="js-toggle-search-options"> Параметры поиска <i class="fa fa-cog" aria-hidden="true"></i> </a>
+                <div class="b-find__row js-search-options" style="display: none">
+                    <div class="b-find__fields-row">
+                        <div class = "b-find__field-title">Дата смерти</div>
+                        <div class="b-find__field-inputs">
+                            <input type = "text" name = "year" placeholder="Год" class="form-input js-search-death-year b-find__field-fourCyphers">
+                            <input type = "text" name = "month" placeholder="Месяц" class="form-input js-search-death-month b-find__field-twoCyphers">
+                            <input type = "text" name = "day" placeholder="День" class="form-input js-search-death-day b-find__field-twoCyphers">
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
                 </div>
             </div>
-            <div class="b-find__row js-search-options" style="display: none">
-                <div>
-                    asdasdas:asdasdasd<br>
-                    asdasdas:asdasdasd<br>
-                    asdasdas:asdasdasd<br>
-                </div>
-            </div>
-
-
-            <!--            <div style="padding: 15px;background-color: white;display: inline-block;margin-top: 5px">
-                            <a href="#" class="btnCardOpen">Открыть карточку</a>
-                        </div>
-                        <div style="padding: 15px;background-color: white;display: inline-block;margin-top: 5px">
-                            <a href="#modal" class="default_popup">Открыть popup</a>
-                        </div>
-            -->        </div>
+        </form>
     </div>
     <div class="b-map" >
         <div id="map">
@@ -115,7 +111,7 @@
                     </tr>
                     <tr>
                         <td class = "card__icon-column">
-                            <i class="fa fa-2x fa-lock"></i>
+                            <i class="fa fa-2x fa-lock js-status-icon"></i>
                         </td>
                         <td>
                             <p class="js-status">Закрыто</p>

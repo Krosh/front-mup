@@ -158,13 +158,29 @@ class Dead extends Model
         return "http://placehold.it/350x150";
     }
 
+    public function getYearBorn()
+    {
+        if ($this->yearBorn != "")
+            return $this->yearBorn;
+        else
+            return explode("-",$this->dateBorn)[0];
+    }
+
+    public function getYearDeath()
+    {
+        if ($this->yearDeath != "")
+            return $this->yearDeath;
+        else
+            return explode("-",$this->dateDeath)[0];
+    }
+
     public function getSearchInfo()
     {
         $arr = [];
         $arr["fio"] = $this->getFio();
         // TODO:: Заменить year на date, когда будет совершен переход на использование полных дат
-        $arr["dateBorn"] = $this->yearBorn;
-        $arr["dateDeath"] = $this->yearDeath;
+        $arr["dateBorn"] = $this->getYearBorn();
+        $arr["dateDeath"] = $this->getYearDeath();
         $arr["cemetery"] = $this->getCemetery()->name;
         $arr["city"] = $this->getCemetery()->getCity()->name;
         $arr["id"] = $this->id;

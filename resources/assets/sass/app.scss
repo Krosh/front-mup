@@ -102,6 +102,7 @@ html, body
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  padding: 10px;
 }
 
 .b-find__btn-menu {
@@ -284,4 +285,20 @@ span:hover.has-hint .hint {
 }
 .card_chart {
   width: 380px;
+}
+.b-find__fields-row {
+  width: 100%;
+}
+.b-find__field-title {
+  float: left;
+  margin-top: 3px;
+}
+.b-find__field-inputs {
+  float: right;
+}
+.b-find__field-fourCyphers {
+  width: 90px;
+}
+.b-find__field-twoCyphers {
+  width: 60px;
 }
