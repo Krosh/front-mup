@@ -107,5 +107,8 @@
 
     <!-- Scripts -->
     <script src="/js/app.js"></script>
+    <script>
+        $('.dropdown-toggle').dropdown();
+    </script>
 </body>
 </html>

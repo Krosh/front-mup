@@ -12,6 +12,12 @@ class DeadTest extends TestCase
     {
         $dead = new Dead();
 
+        $dead->parseFio("Райшель   Клара ");
+        $this->assertEquals($dead->family,"Райшель","family is wrong".$dead->family);
+        $this->assertEquals($dead->name,"Клара","name is wrong");
+        $this->assertEquals($dead->patron,'',"patron is wrong");
+
+
         $dead->parseFio("Иванов Иван Иванович");
         $this->assertEquals($dead->family,"Иванов","family is wrong".$dead->family);
         $this->assertEquals($dead->name,"Иван","name is wrong");

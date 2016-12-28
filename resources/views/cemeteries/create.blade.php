@@ -27,4 +27,18 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(".js-test-toggle").change(function()
+    {
+        if ($(this).is(":checked"))
+        {
+            $(".js-test").show();
+        } else
+        {
+            $(".js-test").hide();
+        }
+    }).change();
+</script>
+
 @endsection

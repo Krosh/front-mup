@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Forms\UploadXmlForm;
 use App\Models\Grave;
+use DateTime;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Illuminate\Support\Facades\DB;
 use Kris\LaravelFormBuilder\FormBuilder;
 use PHPExcel_IOFactory;
 
@@ -15,7 +17,9 @@ class ImportController extends Controller
 
     public function regsystem()
     {
-        $date = "2016-01-01";
+        $dateTime = new DateTime();
+        $dateTime->modify('-10 days');
+        $date = $dateTime->format("Y-m-d");
         $url = "http://regsystem.brn22memory.ru/api/deadWithCoords?date=".$date;
         $file = file_get_contents($url);
         $data = json_decode($file);
@@ -24,8 +28,18 @@ class ImportController extends Controller
             $grave = Grave::loadFromRegsystem($item);
             if (!$grave->exists)
             {
-                $grave->save();
-                $grave->getDeads()[0]->save();
+                DB::beginTransaction();
+                $deads = $grave->getDeads();
+                $graveSaveResult = $grave->save();
+                $deads[0]->idGrave = $grave->id;
+                $deadSaveResult = $deads[0]->save();
+                if (!$graveSaveResult || !$deadSaveResult)
+                {
+                    DB::rollback();
+                    // TODO:: Как-то обработать ошибки
+                }
+                else
+                    DB::commit();
             }
         }
     }

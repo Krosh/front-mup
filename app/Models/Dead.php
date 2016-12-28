@@ -130,6 +130,8 @@ class Dead extends Model
 
         }, $elements);
 
+        // Чтобы пересортировать ключи по порядку начиная с нуля
+        $elements = array_merge($elements,[]);
         if (count($elements)>0)
             $this->family = $elements[0];
         if (count($elements)>1)

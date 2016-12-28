@@ -155,8 +155,7 @@ class Grave extends Model
     public function save(array $options = [])
     {
         $this->numDeads = count($this->_deads);
-        if (!parent::save($options))
-            return false;
+        return parent::save($options);
     }
 
     public function saveDeads()
@@ -298,7 +297,10 @@ class Grave extends Model
             $grave->state = Grave::$STATE_EMPTY;
             $grave->longitude = $data->longitude;
         } else
+        {
             $grave = $duplicate;
+            $grave->loadDeads();
+        }
         return $grave;
     }
 
