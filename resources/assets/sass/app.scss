@@ -292,6 +292,8 @@ span:hover.has-hint .hint {
 .b-find__field-title {
   float: left;
   margin-top: 3px;
+  min-width: 120px;
+  text-align: left;
 }
 .b-find__field-inputs {
   float: right;

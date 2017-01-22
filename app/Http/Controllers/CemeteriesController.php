@@ -219,4 +219,17 @@ class CemeteriesController extends Controller
 
 
 
+    public function loadCoordsFromSite($id)
+    {
+        $cemetery = Cemetery::findOrFail($id);
+        $cemetery->loadCoords();
+    }
+
+    public function map()
+    {
+        return view("map");
+    }
+
+
+
 }

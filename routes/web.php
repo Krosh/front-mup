@@ -27,19 +27,18 @@ Route::group(["prefix" => "import"], function()
 
 Route::group(["prefix" => "cemetery"], function()
 {
-    Route::get("load/{idCemetery}","CemeteryController@loadCoordsFromSite");
-    Route::get("{idCemetery}","CemeteryController@view");
+    Route::get("load/{idCemetery}","CemeteriesController@loadCoordsFromSite");
 });
 
 
-Route::get("/map","CemeteryController@map");
+Route::get("/map","CemeteriesController@map");
 
 Route::resource('cities', 'CitiesController');
 
 Route::get("/cemeteries/info", "CemeteriesController@info");
 Route::get("/cemeteries/geojson", "CemeteriesController@geojson");
-Route::resource('cemeteries', 'CemeteriesController');
 Route::post("/cemeteries/{id}/cadastr", "CemeteriesController@cadastr");
+Route::resource('cemeteries', 'CemeteriesController');
 
 Route::resource('graves', 'GravesController');
 
